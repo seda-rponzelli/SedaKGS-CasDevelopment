@@ -1,0 +1,7 @@
+<templates>
+
+	<screen name="cliente" extends="base">
+		 <parameter key="content" value="/template/manager/clienteManager.jsp"/>
+	</screen>
+
+</templates>

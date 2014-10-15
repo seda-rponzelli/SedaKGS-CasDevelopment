@@ -1,0 +1,15 @@
+<!-- this requires Spring security for allowed-roles configuration -->
+<menus>
+   <menu id='sample'>
+      <paths><match pattern='/**'/></paths>
+   </menu>
+   <menu id='sample.welcome' order="1" path='/welcome'>
+      <paths><match pattern='/welcome/**'/></paths>
+   </menu>
+   <menu id='sample.cliente' order="1" path='/cliente'>
+      <paths><match pattern='/cliente/**'/></paths>
+   </menu>
+   <menu id='sample.servizio' order="1" path='/cliente'>
+      <paths><match pattern='/servizio/**'/></paths>
+   </menu>   
+</menus>
