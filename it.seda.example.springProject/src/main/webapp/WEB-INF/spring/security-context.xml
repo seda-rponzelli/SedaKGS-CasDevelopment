@@ -43,7 +43,7 @@
 	<beans:bean id="serviceProperties" class="it.seda.security.cas.ServiceProperties">
 		<beans:property name="service"   value="http://localhost:8080/it.seda.security.cas/login"/>
 	    <beans:property name="sendRenew" value="false"/>
-	    <beans:property name="applicationName" value="entrate"/>
+	    <beans:property name="applicationName" value="SPRIGPROJECT"/>
 	</beans:bean> 
 	  
 	

@@ -7,7 +7,8 @@ import java.sql.Timestamp;
 @SuppressWarnings("serial")
 public class Cliente implements Serializable {
 	
-	private BigInteger id;
+	//private BigInteger id;
+	private String id;
 	private String nome;
 	private String descrizione;
     private Timestamp registrazione;
@@ -21,12 +22,21 @@ public class Cliente implements Serializable {
 	public void setDescrizione(String descrizione) {
 		this.descrizione = descrizione;
 	}
-	public BigInteger getId() {
+	
+	
+	
+    public String getId() {
 		return id;
 	}
-	public void setId(BigInteger id) {
+	public void setId(String id) {
 		this.id = id;
 	}
+	//	public BigInteger getId() {
+//		return id;
+//	}
+//	public void setId(BigInteger id) {
+//		this.id = id;
+//	}
 	public Timestamp getRegistrazione() {
 		return registrazione;
 	}

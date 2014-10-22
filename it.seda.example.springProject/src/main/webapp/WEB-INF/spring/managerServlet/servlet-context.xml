@@ -27,7 +27,7 @@
 	<bean id="dataSourceBusiness" class="it.seda.jdbc.datasource.RoutingDataSource">
 	 	<property name="targetDataSources">
 	 		<map>
-	 			<entry key="dataSourceRef" value="java:comp/env/jdbc/SEMDataSource"/>
+	 			<entry key="dataSourceRef" value="java:comp/env/jdbc/CASOracleDataSource"/>
 	 		</map>
 	 	</property>
 	 </bean>

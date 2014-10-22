@@ -10,6 +10,19 @@
 		</layout>
 	</appender>
 	
+	
+	<logger name="it.seda.security" >
+		<level value="debug" />
+	</logger>
+	
+	<logger name="it.seda.security.cas" >
+		<level value="debug" />
+	</logger>
+	
+	<logger name="it.seda.example.springProject">
+		<level value="debug" />
+	</logger>
+	
 	<logger name="it.seda.tosca">
 		<level value="debug" />
 	</logger>

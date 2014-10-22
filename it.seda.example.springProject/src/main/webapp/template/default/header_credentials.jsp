@@ -4,7 +4,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 
 <sec:authentication var="user" property="principal" />
-<sec:authorize access="hasAnyRole('ROLE_ADMIN','ROLE_USER')" var="authenticated"/>
+<sec:authorize access="hasAnyRole('SPRIGPROJECT','MODULOSP','MODULOSP','MODULOSP')" var="authenticated"/>
 <table>
 	<tr>
 		<td>

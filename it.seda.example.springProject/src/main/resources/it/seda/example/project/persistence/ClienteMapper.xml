@@ -8,45 +8,76 @@
  	 <!-- TABELLA CLIENTE --> 
  	 
 	<resultMap id="cliente" type="Cliente">
-		<id property="id" column="id" />
-		<result property="nome" column="nome" />
-		<result property="descrizione" column="descrizione" />
-		<result property="registrazione" column="registrazione" />	
+		<id property="id" column="SECUST_CKEYCUST" />
+		<result property="nome" column="SECUST_CCODCUS" />
+		<result property="descrizione" column="SECUST_CDESCCUS" />
+		<result property="registrazione" column="SECUST_GDATAINS" />	
 	</resultMap>
 	
 	<insert id="insertCliente" parameterType="Cliente">
-	  INSERT INTO CLIENTE
-	  (registrazione,descrizione,nome)
+	  INSERT INTO SECUSTTB
+	                  (SECUST_CKEYCUST,
+	                   SECUST_CCODCUS,
+	                   SECUST_CDESCCUS,
+	                   SECUST_CCUSCENSER,
+	                   SECUST_COPERINS,
+	                   SECUST_GDATAINS,
+	                   SECUST_COPEUVAR,
+	                   SECUST_GDATUVAR)
 	  VALUES
-	  (CURRENT TIMESTAMP,#{descrizione},#{nome})
+	                  (id,
+	                   descrizione,
+	                   nome,
+	                   'N',
+	                   'SPRING_EXAMPLE_PROJECT',
+	                   CURRENT_TIMESTAMP,
+	                   'SPRING_EXAMPLE_PROJECT',
+	                   CURRENT_TIMESTAMP)
 	</insert>
 	
 	<update id="updateCliente" parameterType="Cliente">
-	  UPDATE CLIENTE
-       SET descrizione=#{descrizione},nome=#{nome}
-       WHERE id=#{id}
+	  UPDATE SECUSTTB
+       SET  SECUST_CKEYCUST=#{id},
+	        SECUST_CCODCUS=#{nome,
+	        SECUST_CDESCCUS=#{descrizione},
+	        SECUST_GDATUVAR=URRENT_TIMESTAMP 
+       WHERE SECUST_CKEYCUST=#{chiavePrimariaCliente}
 	</update>
 	
-	<delete id="deleteCliente" parameterType="java.math.BigInteger">
-	   DELETE FROM CLIENTE
-	     WHERE id = #{id}   
+	<delete id="deleteCliente" parameterType="string">
+	   DELETE FROM SECUSTTB
+	    WHERE SECUST_CKEYCUST=#{chiavePrimariaCliente}   
 	</delete>
 	
-	<select id="getCliente" parameterType="java.math.BigInteger" resultMap="cliente">
-	   SELECT registrazione,descrizione,nome,id
-	   FROM CLIENTE
-	   WHERE id=#{id}
+	<select id="getCliente" parameterType="string" resultMap="cliente">
+	   SELECT SECUST_CKEYCUST,
+	          SECUST_CCODCUS,
+	          SECUST_CDESCCUS,
+	          SECUST_CCUSCENSER,
+	          SECUST_COPERINS,
+	          SECUST_GDATAINS,
+	          SECUST_COPEUVAR,
+	          SECUST_GDATUVAR
+	   FROM SECUSTTB
+	   WHERE SECUST_CKEYCUST=#{chiavePrimariaCliente}   
 	</select>
 	
 	<select id="listClientiCount"  resultType="int">
-	   SELECT COUNT(REGISTRAZIONE)
-	   FROM CLIENTE
+	   SELECT COUNT(SECUST_CKEYCUST)
+	   FROM SECUSTTB
 	</select>
 	
 	<select id="listClienti"  resultMap="cliente">
-	   SELECT registrazione,descrizione,nome,id
-	   FROM CLIENTE
-	   ORDER BY CLIENTE.REGISTRAZIONE,CLIENTE.ID
+	   SELECT  SECUST_CKEYCUST,
+	           SECUST_CCODCUS,
+	           SECUST_CDESCCUS,
+	           SECUST_CCUSCENSER,
+	           SECUST_COPERINS,
+	           SECUST_GDATAINS,
+	           SECUST_COPEUVAR,
+	           SECUST_GDATUVAR
+	   FROM SECUSTTB
+	   ORDER BY SECUSTTB.SECUST_GDATAINS,SECUSTTB.SECUST_GDATUVAR,SECUSTTB.SECUST_CKEYCUST
 	</select>
 	
 </mapper>
