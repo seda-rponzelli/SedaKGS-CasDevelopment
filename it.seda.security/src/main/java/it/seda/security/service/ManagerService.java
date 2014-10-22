@@ -31,8 +31,8 @@ public class ManagerService {
 	@Autowired private ManagerMapper managerMapper;
 
 	public void insertCustomer(Customer customer) {
-		if (managerMapper.existsCustomer(customer.getId())) {
-			throw new DuplicateCustomerException(customer.getId());
+		if (managerMapper.existsCustomer(customer.getChiavePrimariaCliente())) {
+			throw new DuplicateCustomerException(customer.getChiavePrimariaCliente());
 		}
 		managerMapper.insertCustomer(customer);
 	}
@@ -67,15 +67,16 @@ public class ManagerService {
 	 }
 	 
 	 public void insertApplication(Application application) {
-		 if (managerMapper.existsApplicationByName(application.getName())) {
-			throw new DuplicateApplicationException(application.getName());
+		
+		 if (managerMapper.existsApplicationByName(application.getCodiceApplicazione())) {
+			throw new DuplicateApplicationException(application.getCodiceApplicazione());
 		}
 		 managerMapper.insertApplication(application);
 	 }
 	 
 	 public void updateApplication(Application application) {
-		 if (managerMapper.existsApplicationByName(application.getName())) {
-			 throw new DuplicateApplicationException(application.getName());
+		 if (managerMapper.existsApplicationByName(application.getCodiceApplicazione())) {
+			 throw new DuplicateApplicationException(application.getCodiceApplicazione());
 		 }
 		 managerMapper.updateApplication(application);
 	 }
@@ -126,5 +127,9 @@ public class ManagerService {
 		 rbh.decorate(customerApplicationPage, totalrows);
 
 		 return customerApplicationPage;		 
+	 }
+	 @Transactional(readOnly=true)
+	 public String getCustomerIdByURI(String uri){
+		 return managerMapper.getCustomerIdByURI(uri);
 	 }
 }

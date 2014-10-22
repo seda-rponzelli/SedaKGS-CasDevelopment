@@ -1,54 +1,51 @@
 
 package it.seda.security.cas.authentication;
 
+import it.seda.security.authentication.RefreshContextListener;
 import it.seda.security.authentication.UserDetailsAdapter;
 import it.seda.security.cas.CommonUtils;
 import it.seda.security.cas.ServiceProperties;
 import it.seda.security.domain.Account;
 import it.seda.security.domain.Application;
-import it.seda.security.domain.Authority;
-import it.seda.security.domain.ContainerAccountJson;
 import it.seda.security.service.ManagerService;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.xml.bind.annotation.XmlRootElement;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
+
+
+
+
+
+
+
+
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.MapperFeature;
 
 /**
  * Used by the <code>ExceptionTranslationFilter</code> to commence authentication via the Seda Central
@@ -64,18 +61,22 @@ import org.springframework.web.client.RestTemplate;
  */
 public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, InitializingBean {
 
+	
+	
+	
 	@Autowired protected ManagerService managerService;
 	@Autowired protected UserDetailsService userDetailsService;
-//	@Autowired protected UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken ;
+
 	
 	private ServiceProperties serviceProperties;
 	
-	private static final Logger logger = LoggerFactory.getLogger(CommonUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(CasAuthenticationEntryPoint.class);
 
     private String loginUrl;
     private String redirectUrl ="";
     private String urlEncodedService = "";
     private String applicationId = "";
+    private String customerId="";
 
     public void afterPropertiesSet() throws Exception {
         Assert.hasLength(this.loginUrl, "loginUrl must be specified");
@@ -88,6 +89,9 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
 
     	urlEncodedService = createServiceUrl(servletRequest, response);
         redirectUrl = createRedirectUrl(urlEncodedService);
+        if(redirectUrl==null){
+        	logger.debug("Cas url is null!. Check if you have defined it in serviceProperties.");
+        }
         applicationId = getApplicationId(serviceProperties);
         
         preCommence(servletRequest, response);
@@ -162,15 +166,16 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
 			logger.error(e.getMessage());
 		}
     	if (application != null) {
-    		return application.getId();	
+    		//return application.getId();	
+    		return application.getChiavePrimariaDelleApplicazioni();	
     	} 
     	return "";
     }
     
     /* Metodo per concatenare l'ÏId della applicazione alla Url di redirect */ 
-    protected String concatApplicationIdToUrl (String applicationId) {
-    	logger.debug("Url di redirect: " +redirectUrl + "&applicationId=" +applicationId);
-		return redirectUrl = redirectUrl + "&applicationId=" +applicationId;
+    protected String concatApplicationIdToUrl (String applicationId,String customerId) {
+    	logger.debug("Url di redirect: " +redirectUrl + "&applicationId=" +applicationId+ "&customerId=" +customerId);
+		return redirectUrl = redirectUrl + "&applicationId=" +applicationId+ "&customerId=" +customerId;
 	}
 
 
@@ -185,17 +190,24 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
     protected void submitTicket(HttpServletRequest servletRequest,HttpServletResponse response) throws IOException {
 		HttpSession session=servletRequest.getSession();
     	String ticket = (String) session.getAttribute("ticket");
+    	
     	if (ticket== null)  {
-    		response.sendRedirect(concatApplicationIdToUrl(applicationId));
+    		
+    		String applicationCustomerURl=servletRequest.getRequestURL().toString();
+    		customerId=managerService.getCustomerIdByURI(applicationCustomerURl);
+    	    logger.debug("applicationId = "+applicationId +"  customerId= "+customerId +". Unknown login request.");
+    		response.sendRedirect(concatApplicationIdToUrl(applicationId,customerId));
     		return;
     	}
     	
+    	
+    	logger.debug("Calling cas web service usind ticket: "+ticket);
     	UserDetailsAdapter userDetailsAdapter = getUserBean(ticket);  	
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             // in here, get your principal, and populate the auth object with 
             // the right authorities
-        	UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken=new UsernamePasswordAuthenticationToken(userDetailsAdapter.getUsername(), userDetailsAdapter.getPassword(),userDetailsAdapter.getAuthorities());
-        	usernamePasswordAuthenticationToken.setDetails(userDetailsAdapter);
+        	logger.debug("Building authentication....");
+        	UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken=new UsernamePasswordAuthenticationToken(userDetailsAdapter, userDetailsAdapter.getPassword(),userDetailsAdapter.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
        }
        //response.sendRedirect("it.seda.example.springProject/");
@@ -203,21 +215,21 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
         
 	}
 
-	private UserDetailsAdapter getUserBean(String ticket) {
+	private UserDetailsAdapter getUserBean(String ticket) {	
 		RestTemplate restTemplate = new RestTemplate();
 		String webServiceURL=urlEncodedService+"/casws/"+ticket+".json";
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.configure(Feature.UNWRAP_ROOT_VALUE, true);
-		MappingJacksonHttpMessageConverter messageConverter = new MappingJacksonHttpMessageConverter();
-		messageConverter.setObjectMapper(mapper);
+    	com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
+		objectMapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+		objectMapper.configure(MapperFeature.USE_ANNOTATIONS, true);
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
+		messageConverter.setObjectMapper(objectMapper);
 		List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
 		messageConverters.add(messageConverter);
 		restTemplate.setMessageConverters(messageConverters);
+    	restTemplate.getForObject(webServiceURL, Account.class);
     	Account account=restTemplate.getForObject(webServiceURL, Account.class);
     	UserDetailsAdapter userDetailsAdapter=new UserDetailsAdapter(account);
-//		restTemplate.getMessageConverters().add(new MappingJacksonHttpMessageConverter());
-//		ContainerAccountJson accountJson=restTemplate.getForObject(webServiceURL, ContainerAccountJson.class);
-//		UserDetailsAdapter userDetailsAdapter=new UserDetailsAdapter(accountJson.getAccountJson());
 		return userDetailsAdapter;
 	}
 	
@@ -226,12 +238,30 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
 		RestTemplate restTemplate = new RestTemplate();
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(Feature.UNWRAP_ROOT_VALUE, true);
-		MappingJacksonHttpMessageConverter messageConverter = new MappingJacksonHttpMessageConverter();
-		messageConverter.setObjectMapper(mapper);
+		
+//		MappingJacksonHttpMessageConverter messageConverter = new MappingJacksonHttpMessageConverter();
+//		messageConverter.setObjectMapper(mapper);
+//		List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
+//		messageConverters.add(messageConverter);
+//		restTemplate.setMessageConverters(messageConverters);
+    	String webServiceURL="http://localhost:8080/it.seda.security.cas/login/casws/TICKET.json";
+//    	restTemplate.getForObject(webServiceURL, Account.class);
+//    	Account model=restTemplate.getForObject(webServiceURL, Account.class);
+//    	System.out.println("Name"+model.getExpiration());
+    	
+    	
+    	
+    	
+		com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
+		objectMapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+		objectMapper.configure(MapperFeature.USE_ANNOTATIONS, true);
+		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
+		messageConverter.setObjectMapper(objectMapper);
 		List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
 		messageConverters.add(messageConverter);
 		restTemplate.setMessageConverters(messageConverters);
-    	String webServiceURL="http://localhost:8080/it.seda.security.cas/login/casws/TICKET.json";
+    	//String webServiceURL="http://localhost:8080/it.seda.security.cas/login/casws/TICKET.json";
     	restTemplate.getForObject(webServiceURL, Account.class);
     	Account model=restTemplate.getForObject(webServiceURL, Account.class);
     	System.out.println("Name"+model.getExpiration());

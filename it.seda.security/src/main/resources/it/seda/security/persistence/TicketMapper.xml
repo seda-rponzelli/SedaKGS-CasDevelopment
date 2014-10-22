@@ -5,21 +5,62 @@
 <mapper namespace="it.seda.security.persistence.TicketMapper">
 
 	<resultMap id="ticket" type="Ticket">
-		<id property="id" column="id" />
-		<result property="username" column="username" />
-		<result property="applicationId" column="application_id" />
-		<result property="creationDate" column="creation_date" />
-		<result property="expirationDate" column="expiration_date" />
+		<id property="chiavePrimariaDellaTabellaDeiTicket" column="SETICK_CKEYTICK" />
+		<result property="username" column="SETICK_CUSERNAME" />
+		<result property="codiceFiscaleDelDelegatoPersonaFisica" column="SETICK_CCODFISC" />
+		<result property="dataCreazioneTickets" column="SETICK_GDATCREA" />
+		<result property="dataScadenzaTicket" column="SETICK_GDATSCAD" />
+		<result property="operatoreInserimento" column="SETICK_COPERINS" />
+		<result property="dataInserimento" column="SETICK_GDATAINS" />
+		<result property="operatoreUltimaVariazione" column="SETICK_COPEUVAR" />
+		<result property="dataUltimaVariazione" column="SETICK_GDATUVAR" />
+		<result property="chiavePrimariaDelleApplicazioni" column="SEAPPL_CKEYAPPL" />
 	</resultMap> 	
 
+<!--  
 	<insert id="insertTicket" parameterType="Ticket">
 		INSERT INTO TICKETS (ID, USERNAME, APPLICATION_ID, EXPIRATION_DATE)
 		VALUES (#{id},#{username},#{applicationId}, #{expirationDate})
 	</insert>
+-->
+<!--ORACLE DB INIZIO -->
+<insert id="insertTicket" parameterType="Ticket">
+INSERT INTO SETICKTB (SETICK_CKEYTICK, 
+                          SETICK_CUSERNAME, 
+                          SETICK_CCODFISC, 
+                          SETICK_GDATCREA,
+                          SETICK_GDATSCAD,
+                          SETICK_COPERINS,
+                          SETICK_GDATAINS,
+                          SETICK_COPEUVAR,
+                          SETICK_GDATUVAR,
+                          SEAPPL_CKEYAPPL)
+		VALUES (#{chiavePrimariaDellaTabellaDeiTicket},
+            #{username},
+            #{codiceFiscaleDelDelegatoPersonaFisica}, 
+            #{dataCreazioneTickets},
+            #{dataScadenzaTicket},
+            #{operatoreInserimento},
+            CURRENT_TIMESTAMP,
+            #{operatoreUltimaVariazione},
+            CURRENT_TIMESTAMP,
+            #{chiavePrimariaDelleApplicazioni}
+            )
+ </insert>
+<!-- ORACLE DB FRNE -->
+<!-- 
 	<delete id="deleteTicket" parameterType="Ticket">
 		DELETE FROM TICKETS
 		WHERE ID=#{id}
 	</delete>
+ -->
+ <!--ORACLE DB INIZIO -->
+ <delete id="deleteTicket" parameterType="Ticket">
+		DELETE FROM TICKETS
+		WHERE ID=#{chiavePrimariaDellaTabellaDeiTicket}
+	</delete>
+ <!-- ORACLE DB FRNE -->
+ <!--  
 	<select id="selectTicket" parameterType="string">
 	    SELECT TICKETS.ID
 	         , TICKETS.USERNAME
@@ -29,6 +70,24 @@
 	     FROM TICKETS
 	    WHERE TICKETS.ID=#{id}
 	</select>
+-->
+<!--ORACLE DB INIZIO -->
+<select id="selectTicket" parameterType="string">
+SELECT SETICKTB.SETICK_CKEYTICK
+	         , SETICKTB.SETICK_CUSERNAME
+	         , SETICKTB.SETICK_CCODFISC
+	         , SETICKTB.SETICK_GDATCREA	         
+	         , SETICKTB.SETICK_GDATSCAD	
+           , SETICKTB.SETICK_COPERINS	
+           , SETICKTB.SETICK_GDATAINS	
+           , SETICKTB.SETICK_COPEUVAR	
+           , SETICKTB.SETICK_GDATUVAR
+           , SETICKTB.SEAPPL_CKEYAPPL
+	     FROM SETICKTB
+	    WHERE SETICKTB.SETICK_CKEYTICK=#{chiavePrimariaDellaTabellaDeiTicket}
+</select>
+ <!-- ORACLE DB FINE -->
+ <!--  
 	<select id="listTicket" resultMap="ticket" parameterType="Ticket">
 	    SELECT TICKETS.ID
 	         , TICKETS.USERNAME
@@ -42,6 +101,28 @@
 	     </where>
 	    ORDER BY TICKETS.EXPIRATION_DATE DESC	       		
 	</select>
+	-->
+<!--  ORACLE DB INIZIO -->
+<select id="listTicket" resultMap="ticket" parameterType="Ticket">
+SELECT SETICKTB.SETICK_CKEYTICK
+	         , SETICKTB.SETICK_CUSERNAME
+	         , SETICKTB.SETICK_CCODFISC
+	         , SETICKTB.SETICK_GDATCREA	         
+	         , SETICKTB.SETICK_GDATSCAD	
+           , SETICKTB.SETICK_COPERINS	
+           , SETICKTB.SETICK_GDATAINS	
+           , SETICKTB.SETICK_COPEUVAR	
+           , SETICKTB.SETICK_GDATUVAR
+           , SETICKTB.SEAPPL_CKEYAPPL
+	     FROM SETICKTB
+	     <where>
+	     	<if test="username != null"> SETICK_CUSERNAME=#{username}</if>
+	     	<if test="chiavePrimariaDelleApplicazioni != null"> SEAPPL_CKEYAPPL=#{chiavePrimariaDelleApplicazioni}</if>
+	     </where>
+	    ORDER BY SETICKTB.SETICK_GDATSCAD DESC	
+</select> 
+<!-- ORACLE DB FINE -->
+<!--  
 	<select id="listTicketCount" resultType="int" parameterType="Ticket">
 	    SELECT COUNT(*)
 	     FROM TICKETS
@@ -50,4 +131,13 @@
 	     	<if test="application_id != null"> application_id=#{application_id}</if>
 	     </where>
 	</select>
+-->
+<select id="listTicketCount" resultType="int" parameterType="Ticket">
+SELECT COUNT(*)
+	     FROM SETICKTB
+	     <where>
+	     	<if test="username != null">SETICK_CUSERNAME=#{username}</if>
+	     	<if test="chiavePrimariaDelleApplicazioni != null"> SEAPPL_CKEYAPPL=#{chiavePrimariaDelleApplicazioni}</if>
+	     </where>
+</select>
 </mapper>

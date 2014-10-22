@@ -60,7 +60,11 @@ public class UserDetailsAdapter implements UserDetails {
 		Set<GrantedAuthority> authorities =
 				new HashSet<GrantedAuthority>();
 		for (Authority role : account.getAuthorities()) {
-			authorities.add(new SimpleGrantedAuthority(role.getName()));
+			String [] levelAuthorities=role.getName().split("_");
+			for (String levelAuthority : levelAuthorities) {
+				authorities.add(new SimpleGrantedAuthority(levelAuthority));
+			}
+			//authorities.add(new SimpleGrantedAuthority(role.getName()));
 		}
 		return authorities;
 	}

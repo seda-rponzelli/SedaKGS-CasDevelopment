@@ -7,7 +7,9 @@ import it.seda.jdbc.commons.DataPage;
 import it.seda.jdbc.commons.DefaultDataPage;
 import it.seda.jdbc.ibatis.RowBoundsHelper;
 import it.seda.security.domain.Ticket;
+import it.seda.security.domain.UserApplication;
 import it.seda.security.persistence.ManagerMapper;
+import it.seda.security.persistence.SecurityMapper;
 import it.seda.security.persistence.TicketMapper;
 import it.seda.security.service.exceptions.ApplicationNotFoundException;
 
@@ -29,6 +31,7 @@ public class TicketService {
 
 	@Autowired private TicketMapper ticketMapper;
 	@Autowired private ManagerMapper managerMapper;
+	@Autowired private SecurityMapper securityMapper;
 	
 	/**
 	 * 
@@ -42,11 +45,20 @@ public class TicketService {
 		DateTime dateTime = new DateTime();
 
 		Ticket ticket = new Ticket();
-		ticket.setId(UUID.randomUUID().toString());
+		ticket.init();
+		//ticket.setId(UUID.randomUUID().toString());
+		ticket.setChiavePrimariaDellaTabellaDeiTicket(UUID.randomUUID().toString());
 		ticket.setUsername(username);
-		ticket.setApplicationId(applicationId);
-		ticket.setCreationDate(dateTime.toDate());
-		ticket.setExpirationDate(dateTime.plusMinutes(1).plusSeconds(30).toDate());
+		
+		UserApplication userApplication=new UserApplication(username,applicationId);
+		
+		ticket.setCodiceFiscaleDelDelegatoPersonaFisica(securityMapper.getCodiceFiscaleFromUserApplication(userApplication));
+		//ticket.setApplicationId(applicationId);
+		ticket.setChiavePrimariaDelleApplicazioni(applicationId);
+		//ticket.setCreationDate(dateTime.toDate());
+		ticket.setDataCreazioneTickets(dateTime.toDate());
+		//ticket.setExpirationDate(dateTime.plusMinutes(1).plusSeconds(30).toDate());
+		ticket.setDataScadenzaTicket(dateTime.plusMinutes(1).plusSeconds(30).toDate());
 		
 		insertTicket(ticket);
 		

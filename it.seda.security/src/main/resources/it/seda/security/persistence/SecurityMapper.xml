@@ -2,33 +2,91 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="it.seda.security.persistence.SecurityMapper">
 
+<mapper namespace="it.seda.security.persistence.SecurityMapper">
+     
+    
+
+  
 	<resultMap id="abstractAccount" type="AbstractAccount">
-		<id property="username" column="username" />
-		<result property="firstName" column="firstName" />
-		<result property="lastName" column="lastName" />
-		<result property="email" column="email" />
-		<result property="enabled" column="enabled" />
-		<result property="attempts" column="attempts" />
-		<result property="lastAttempt" column="lastAttempt" />
+		<id property="username" column="SEUSER_CUSERNAME" />
+		<id property="customerId" column="SECUST_CKEYCUST" />
+		<result property="firstName" column="SEUSER_CNOMEUSER" />
+		<result property="lastName" column="SEUSER_CCOGNUSER" />
+		<result property="email" column="SEUSER_CINDEMAIL" />
+		<result property="codiceFiscale" column="SEUSER_CCODFISC" />
+		<result property="enabled" column="SEUSER_CUSRABIL" />
+		<result property="attempts" column="SEUSER_NNUMTENTIVI" />
+		<result property="lastAttempt" column="SEUSER_GULTIMOTENT" />
 	</resultMap> 	
 
+
 	<resultMap id="mutableAccount" type="MutableAccount" extends="abstractAccount">
-		<result property="customerId" column="customerId" />	
-		<result property="groupName" column="groupName" />
+	<!--  	<result property="customerId" column="SECUST_CKEYCUST" />	
+		<result property="groupName" column="SEGRUP_CKEYGRUP" />-->
+	<id property="chiaveTabellaRelazioneUserCliente" column="SEUTEC_CKEYUTEC"></id>	
+	<id property="chiavePrimariaDellaTabellaUtentiClienti" column="SEUTEC_CKEYUTEC"></id>
+    <result property="operatoreInserimento"  column="SEUTEC_COPERINS"/> 
+	<result property="dataInserimento"  column="SEUTEC_GDATAINS"/> 
+	<result property="operatoreUltimaVariazione" column="SEUTEC_COPEUVAR"/> 
+	<result property="dataUltimaVariazione" column="SEUTEC_GDATUVAR"/> 
+	<result property="chiavePrimariaDelCliente" column="SECUST_CKEYCUST"/> 
+	<result property="chiavePrimariaTabellaUsers" column="SEUSER_CKEYUSER"/> 
+	<result property="chiavePrimariaTabellaGruppiUtenti" column="SEGRUU_CKEYGRUU"/>
+	<result property="chiavePrimariaDellaTabellaGruppi" column="SEGRUP_CKEYGRUP"/>	
+	<result property="username" column="SEUSER_CUSERNAME"/>
+	<result property="dataPersonaFisicaODelegato" column="SEUSER_GDATNASCITA"/>
+	<result property="comuneNascitaPersonaFisicaODelegato" column="SEUSER_CCOMUNASCITA"/>
+    <result property="indicaSeNascitaAllEstero" column="SEUSER_DNASCEST"/>
+	<result property="tipoDocumento" column="SEUSER_CCODTIPDOC"/>
+	<result property="numeroDocumento" column="SEUSER_DNUMERODOC"/>
+	<result property="descrizioneEnteCheRilasciaIlDocumento" column="SEUSER_DDESCENTE"/>
+	<result property="dataRilascioDocumento" column="SEUSER_GDATARILA"/>
+	<result property="indicaSeIndirizzoAllEstero" column="SEUSER_DRESESTERO"/>
+	<result property="indirizzoPersonaFisicaODelegato" column="SEUSER_CINDIRIZZO"/>
+	<result property="comuneFiscalePersonaFisicaODelegato" column="SEUSER_CCOMUNE"/>
+	<result property="frazioneDelComuneFiscalePersonaFisicaODelegato" column="SEUSER_CFRAZIONE"/>
+	<result property="ilCAPDelComuneFiscalePersonaFisicaODelegato" column="SEUSER_CCAPCOMFISC"/>
+	<result property="provinciaDelComuneFiscalePersonaFisicaODelegato" column="SEUSER_CPROVINCIA"/>
+	<result property="numeroTelefonicoPersonaFisicaODelegato" column="SEUSER_CTELEFONO"/>
+	<result property="numeroCellularePersonaFisicaODelegato" column="SEUSER_CCELLULARE"/>
+	<result property="indirizzoEMailDelDelegatoOPersonaFisica" column="SEUSER_CINDEMAIL"/>
+	<result property="eMailPECDelDelegatoPersonaFisica" column="SEUSER_CPECDELEG"/>
+	<result property="naturaGiuridicaDellUtenza" column="SEUSER_CFLAGGIUR"/>
+	<result property="codiceFiscalePIVADellAzienda" column="SEUSER_CFISCPIVAAZI"/>
+	<result property="denominazioneAzienda" column="SEUSER_CDENOMIN"/>
+	<result property="indicaSeSedeAllEstero" column="SEUSER_DSEDEESTERO"/>
+	<result property="indirizzoAzienda" column="SEUSER_CINDAZIENDA"/>
+	<result property="comuneFiscaleAzienda" column="SEUSER_CCOMUAZIE"/>
+	<result property="frazioneDelComuneFiscaleDellAzienda" column="SEUSER_CFRAZAZIE"/>
+	<result property="ilCAPFiscaleDellAzienda" column="SEUSER_CCAPAZIEN"/>
+	<result property="provinciaDelComuneFiscaleDellAzienda" column="SEUSER_CPROVAZIEN"/>
+	<result property="numeroTelefonicoAzienda" column="SEUSER_CTELEFONOAZI"/>
+	<result property="numeroFaxAzienda" column="SEUSER_CNUMEROFAX"/>
+	<result property="eMailAzienda" column="SEUSER_CEMAILAZI"/>
+	<result property="eMailPECAzienda" column="SEUSER_CPECAZIENDA"/>
+	<result property="indicaSeUtenzaAbilitata" column="SEUSER_CUSRABIL"/>
+	<result property="dataRegistrazione" column="SEUSER_GDATAREG"/>
+	<result property="dataScadenzaUser" column="SEUSER_GDATASCAD"/>
+	<result property="dataScadenzaCredenziali" column="SEUSER_GSCADCREDEN"/>
+	<result property="dataUltimoAccesso" column="SEUSER_GULTIMOACC"/>
 	</resultMap>
  	
 	<resultMap id="account" type="Account" extends="abstractAccount">
-		<result property="registration" column="registration" />
-		<result property="expiration" column="expiration" />
-		<result property="credentialsExpiration" column="credentialsExpiration" />
+		<result property="registration" column="SEUSER_GDATAREG" />
+		<result property="expiration" column="SEUSER_GDATASCAD" />
+		<result property="credentialsExpiration" column="SEUSER_GSCADCREDEN" />
 	</resultMap>
 	
 	<resultMap id="group" type="Group">
-		<id property="id" column="ID" />
-		<result property="groupName" column="GROUP_NAME" />
-		<result property="groupDescription" column="GROUP_DESCRIPTION" />
+		<id property="chiavePrimariaDellaTabellaGruppi" column="SEGRUP_CKEYGRUP" />
+		<result property="chiaveGruppo" column="SEGRUP_CCODGRUPPO" />
+	    <result property="descrizioneGruppo" column="SEGRUP_CDESGRUPPO" />
+	    <result property="operatoreInserimento" column="SEGRUP_COPERINS" />
+	    <result property="dataInserimento" column="SEGRUP_GDATAINS" />
+	    <result property="operatoreUltimaVariazione" column="SEGRUP_COPEUVAR" />
+	    <result property="dataUltimaVariazione" column="SEGRUP_GDATUVAR" />
+	    <result property="chiavePrimariaDelCliente" column="SECUST_CKEYCUST" />
 	</resultMap>
 	
 	<resultMap id="accountComplete" type="Account" extends="account">
@@ -36,7 +94,67 @@
 			<result column="authority" property="name" />
 		</collection>
 	</resultMap>
+	
+	
+	<resultMap id="legameGruppo" type="LegameGruppo">
+		<id property="chiavePrimariaLegameGruppoApplicazioniModuloFunzioniSottoFunzioni" column="SELGFN_CKEYLGFN" />
+		<result property="operatoreInserimento" column="SELGFN_COPERINS" /> 
+		<result property="dataInserimento" column="SELGFN_GDATAINS" /> 
+		<result property="operatoreUltimaVariazione" column="SELGFN_COPEUVAR" /> 
+		<result property="dataUltimaVariazione" column="SELGFN_GDATUVAR" /> 
+		<result property="chiavePrimariaDellaTabellaGruppi" column="SEGRUP_CKEYGRUP" /> 
+		<result property="chiavePrimariaLegameApplicazioniFunzioniSottofunzioni" column="SELFNS_CKEYLFNS" />  
+	</resultMap>
+	
+	
+	
+	<resultMap id="legameFunzione" type="LegameFunzione">
+		<id property="chiavePrimariaDelLegameApplicazioniFunzioniSottofunzioni" column="SELFNS_CKEYLFNS" />
+		<result property="operatoreInserimento" column="SELFNS_COPERINS" /> 
+		<result property="dataInserimento" column="SELFNS_GDATAINS" /> 
+		<result property="operatoreUltimaVariazione" column="SELFNS_COPEUVAR" /> 
+		<result property="dataUltimaVariazione" column="SELFNS_GDATUVAR" /> 
+		<result property="chiavePrimariaDelleApplicazioni" column="SEAPPL_CKEYAPPL" /> 
+		<result property="chiavePrimariaDeiModuliDelleApplicazioni" column="SEMODU_CKEYMODU" /> 
+		<result property="chiavePrimariaDelleFunzioni" column="SEFUNZ_CKEYFUNZ" /> 
+		<result property="chiavePrimariaDelleSottoFunzioni" column="SESFUN_CKEYSFUN" /> 
+	</resultMap>
+	
+	
+	<resultMap id="modulo" type="Modulo">
+		<id property="chiavePrimariaDeiModuliDelleApplicazioni" column="SEMODU_CKEYMODU" />
+		<result property="codiceModulo" column="SEMODU_CCODMODU" /> 
+		<result property="descrizioneModulo" column="SEMODU_CDESCMODU" /> 
+		<result property="operatoreInserimento" column="SEMODU_COPERINS" /> 
+		<result property="dataInserimento" column="SEMODU_GDATAINS" /> 
+		<result property="operatoreUltimaVariazione" column="SEMODU_COPEUVAR" /> 
+		<result property="dataUltimaVariazione" column="SEMODU_GDATUVAR" /> 
+	</resultMap>
+	
+	
+	<resultMap id="funzione" type="Funzione">
+		<id property="chiavePrimariaDelleFunzioni" column="SEFUNZ_CKEYFUNZ" />
+		<result property="codiceFunzione" column="SEFUNZ_CCODFUN" /> 
+		<result property="descrizioneFunzione" column="SEFUNZ_CDESCFUN" /> 
+		<result property="operatoreInserimento" column="SEFUNZ_COPERINS" /> 
+		<result property="dataInserimento" column="SEFUNZ_GDATAINS" /> 
+		<result property="operatoreUltimaVariazione" column="SEFUNZ_COPEUVAR" /> 
+		<result property="dataUltimaVariazione" column="SEFUNZ_GDATUVAR" /> 
+	</resultMap>
+	
+	
+	<resultMap id="sottoFunzione" type="sottoFunzione">
+		<id property="chiavePrimariaDelleSottoFunzioni" column="SESFUN_CKEYSFUN" />
+		<result property="codiceSottoFunzione" column="SESFUN_CCODSFU" /> 
+		<result property="descrizioneSottoFunzione" column="SESFUN_CDESCSFU" /> 
+		<result property="operatoreInserimento" column="SESFUN_COPERINS" /> 
+		<result property="dataInserimento" column="SESFUN_GDATAINS" /> 
+		<result property="operatoreUltimaVariazione" column="SESFUN_COPEUVAR" /> 
+		<result property="dataUltimaVariazione" column="SESFUN_GDATUVAR" /> 
+	</resultMap>
 
+
+<!--  
 	<select id="getAccountByUsername" parameterType="string" resultMap="accountComplete">
 		SELECT
 		USERS.username,
@@ -55,8 +173,47 @@
 		AND GROUP_MEMBERS.USERNAME = USERS.USERNAME
 		AND GROUP_AUTHORITIES.GROUP_ID = GROUP_MEMBERS.GROUP_ID
 	</select>
-	
-	<select id="getMutableAccountByUsername" parameterType="string" resultMap="mutableAccount">
+-->
+<!--  ORACLE DB INIZIO -->
+<select id="getAccountByUsername" parameterType="string" resultMap="accountComplete">
+SELECT  SEUSERTB.SEUSER_CKEYUSER,
+        SEUSERTB.SEUSER_CNOMEUSER,
+        SEUSERTB.SEUSER_CCOGNUSER,
+        SEUSERTB.SEUSER_CINDEMAIL,
+        SEUSERTB.SEUSER_CCODFISC,
+        SEUSERTB.SEUSER_CUSRABIL,
+        SEUSERTB.SEUSER_GDATAREG,
+        SEUSERTB.SEUSER_GDATASCAD,
+        SEUSERTB.SEUSER_GSCADCREDEN,
+        SEUSERTB.SEUSER_NNUMTENTIVI,
+        SEUSERTB.SEUSER_GULTIMOTENT,
+        CONCAT(SEAPPLTB.SEAPPL_CCODAPP,'_')||COALESCE(CONCAT(SEMODUTB.SEMODU_CCODMODU,'_'),'') || COALESCE(CONCAT(SEFUNZTB.SEFUNZ_CCODFUN,'_'),'') || COALESCE(SESFUNTB.SESFUN_CCODSFU,'') as authority
+FROM SEUSERTB 
+INNER JOIN SEUTECTB
+ON SEUTECTB.SEUSER_CKEYUSER=SEUSERTB.SEUSER_CKEYUSER
+INNER JOIN SEGRUUTB
+ON SEGRUUTB.SEUTEC_CKEYUTEC=SEUTECTB.SEUTEC_CKEYUTEC
+INNER JOIN SEGRUPTB
+ON SEGRUPTB.SEGRUP_CKEYGRUP=SEGRUPTB.SEGRUP_CKEYGRUP
+INNER JOIN SELGFNTB
+ON SELGFNTB.SEGRUP_CKEYGRUP=SEGRUPTB.SEGRUP_CKEYGRUP
+INNER JOIN SELFNSTB
+ON SELFNSTB.SELFNS_CKEYLFNS=SELGFNTB.SELFNS_CKEYLFNS
+INNER JOIN SEAPPLTB
+ON SEAPPLTB.SEAPPL_CKEYAPPL=SELFNSTB.SEAPPL_CKEYAPPL
+INNER JOIN SEMODUTB
+ON SEMODUTB.SEMODU_CKEYMODU=SELFNSTB.SEMODU_CKEYMODU
+INNER JOIN SEFUNZTB
+ON SEFUNZTB.SEFUNZ_CKEYFUNZ=SELFNSTB.SEFUNZ_CKEYFUNZ
+INNER JOIN SESFUNTB
+ON SESFUNTB.SESFUN_CKEYSFUN=SELFNSTB.SESFUN_CKEYSFUN
+WHERE SEUSERTB.SEUSER_CUSERNAME = #{username}
+</select>
+<!--  ORACLE DB FINE -->
+
+
+<!--  
+<select id="getMutableAccountByUsername" parameterType="string" resultMap="mutableAccount">
 		SELECT
 		USERS.username,
 		USERS.firstName,
@@ -76,21 +233,90 @@
 		ON CUSTOMER_USERS.username=USERS.username	
 		WHERE USERS.USERNAME=#{username}
 	</select>
+-->
 
+<!--  ORACLE DB INIZIO -->
+<select id="getMutableAccountByUsername" parameterType="string" resultMap="mutableAccount">
+     SELECT  SEUSERTB.SEUSER_CKEYUSER,
+        SEUSERTB.SEUSER_CNOMEUSER,
+        SEUSERTB.SEUSER_CCOGNUSER,
+        SEUSERTB.SEUSER_CINDEMAIL,
+        SEUSERTB.SEUSER_CCODFISC,
+        SEUSERTB.SEUSER_CUSRABIL,
+        SEUSERTB.SEUSER_GDATAREG,
+        SEUSERTB.SEUSER_GDATASCAD,
+        SEUSERTB.SEUSER_GSCADCREDEN,
+        SEUSERTB.SEUSER_NNUMTENTIVI,
+        SEUSERTB.SEUSER_GULTIMOTENT,
+        SECUSTTB.SECUST_CKEYCUST,
+        SEGRUPTB.SEGRUP_CKEYGRUP,
+        SEUTECTB.SEUTEC_COPERINS,
+	    SEUTECTB.SEUTEC_GDATAINS,
+	    SEUTECTB.SEUTEC_COPEUVAR,
+	    SEUTECTB.SEUTEC_GDATUVAR,
+	    SECUSTTB.SECUST_CKEYCUST,
+	    SEUSERTB.SEUSER_CKEYUSER,
+	    SEGRUUTB.SEGRUU_CKEYGRUU,
+	    SEGRUPTB.SEGRUP_CKEYGRUP
+      FROM SEUSERTB
+      INNER JOIN SEUTECTB 
+      ON SEUTECTB.SEUSER_CKEYUSER=SEUSERTB.SEUSER_CKEYUSER
+      INNER JOIN SEGRUUTB
+      ON SEGRUUTB.SEUTEC_CKEYUTEC=SEUTECTB.SEUTEC_CKEYUTEC
+      INNER JOIN SEGRUPTB
+      ON SEGRUPTB.SEGRUP_CKEYGRUP=SEGRUUTB.SEGRUP_CKEYGRUP
+      INNER JOIN SECUSTTB
+      ON SECUSTTB.SECUST_CKEYCUST=SEUTECTB.SECUST_CKEYCUST
+      WHERE SEUSERTB.SEUSER_CUSERNAME=#{chiavePrimariaTabellaUsers}
+</select>
+
+<!--  ORACLE DB FINE -->
+
+<!-- 
 	<select id="findPasswordByUsername" parameterType="Account" resultType="string">
 		SELECT SIGNON.password
 		  FROM SIGNON
 		 WHERE SIGNON.username = #{username}
 	</select>
-	
-	<select id="groupsList"  resultMap="group">
+-->	
+
+<!-- ORACLE DB INIZIO -->
+<select id="findPasswordByCustumerUser" parameterType="UsernameClient" resultType="string">	 
+SELECT SEPWRDTB.SEPWRD_CPASSWORD
+FROM SEPWRDTB INNER JOIN SEUSERTB
+ON SEPWRDTB.SEUSER_CKEYUSER=SEUSERTB.SEUSER_CKEYUSER
+INNER JOIN SEUTECTB
+ON SEUTECTB.SEUSER_CKEYUSER=SEUSERTB.SEUSER_CKEYUSER
+INNER JOIN SECUSTTB
+ON SECUSTTB.SECUST_CKEYCUST=#{customerId}
+WHERE SEUSERTB.SEUSER_CUSERNAME = #{username}	 
+</select>
+<!-- ORACLE DB FINE -->
+
+<!-- 
+<select id="groupsList"  resultMap="group">
 		SELECT GROUPS.GROUP_DESCRIPTION,
 		       GROUPS.GROUP_NAME,
 		       GROUPS.ID 
 		  FROM GROUPS
 		ORDER BY GROUP_NAME 
 	</select>
-	
+	 -->
+<!-- ORACLE DB INIZIO -->
+<select id="groupsList"  resultMap="group">
+		SELECT SEGRUPTB.SEGRUP_CKEYGRUP,
+         SEGRUPTB.SEGRUP_CCODGRUPPO,
+         SEGRUPTB.SEGRUP_CDESGRUPPO,
+         SEGRUPTB.SEGRUP_COPERINS,
+         SEGRUPTB.SEGRUP_GDATAINS,
+         SEGRUPTB.SEGRUP_COPEUVAR,
+         SEGRUPTB.SEGRUP_GDATUVAR,
+         SEGRUPTB.SECUST_CKEYCUST,
+  FROM   SEGRUPTB 
+  ORDER BY SEGRUP_CCODGRUPPO 
+</select>
+<!-- ORACLE DB FINE -->
+<!--  
 	<select id="listAccount"  parameterType="string" resultMap="mutableAccount">
 	  SELECT
 		USERS.username,
@@ -115,6 +341,46 @@
 		ORDER BY USERS.username
 	</select>
 	
+	-->
+	<!-- ORACLE DB INIZIO -->
+	<select id="listAccount"  parameterType="string" resultMap="mutableAccount">
+	SELECT  SEUSERTB.SEUSER_CKEYUSER,
+          SEUSERTB.SEUSER_CNOMEUSER,
+          SEUSERTB.SEUSER_CCOGNUSER,
+        SEUSERTB.SEUSER_CINDEMAIL,
+        SEUSERTB.SEUSER_CUSRABIL,
+        SEUSERTB.SEUSER_GDATAREG,
+        SEUSERTB.SEUSER_GDATASCAD,
+        SEUSERTB.SEUSER_GSCADCREDEN,
+        SEUSERTB.SEUSER_NNUMTENTIVI,
+        SEUSERTB.SEUSER_GULTIMOTENT,
+        SECUSTTB.SECUST_CKEYCUST,
+        SEGRUPTB.SEGRUP_CKEYGRUP,
+        SEUTECTB.SEUTEC_COPERINS,
+	    SEUTECTB.SEUTEC_GDATAINS,
+	    SEUTECTB.SEUTEC_COPEUVAR,
+	    SEUTECTB.SEUTEC_GDATUVAR,
+	    SECUSTTB.SECUST_CKEYCUST,
+	    SEUSERTB.SEUSER_CKEYUSER,
+	    SEGRUUTB.SEGRUU_CKEYGRUU,
+	  SEGRUPTB.SEGRUP_CKEYGRUP
+      FROM SEUSERTB
+      INNER JOIN SEUTECTB 
+      ON SEUTECTB.SEUSER_CKEYUSER=SEUSERTB.SEUSER_CKEYUSER
+      INNER JOIN SEGRUUTB
+      ON SEGRUUTB.SEUTEC_CKEYUTEC=SEUTECTB.SEUTEC_CKEYUTEC
+      INNER JOIN SEGRUPTB
+      ON SEGRUPTB.SEGRUP_CKEYGRUP=SEGRUUTB.SEGRUP_CKEYGRUP
+      INNER JOIN SECUSTTB
+      ON SECUSTTB.SECUST_CKEYCUST=SEUTECTB.SECUST_CKEYCUST
+      WHERE SEUSERTB.SEUSER_CKEYUSER!='admin'
+	  AND SECUSTTB.SECUST_CKEYCUST=#{customerId}		
+      ORDER BY SEUSERTB.SEUSER_CKEYUSER
+	</select>
+	<!-- ORACLE DB FINE -->
+	
+	
+	<!-- 
 	<select id="listAccountCount"  parameterType="string" resultType="int">
 	   SELECT COUNT(USERS.USERNAME)
        FROM USERS
@@ -123,14 +389,152 @@
        WHERE USERS.USERNAME &lt;&gt; 'admin'
        AND CUSTOMER_USERS.customer_id=#{customerId}
 	</select>
-	
+	 -->
+	 <select id="listAccountCount"  parameterType="string" resultType="int">
+	 SELECT COUNT(SEUSERTB.SEUSER_CKEYUSER)
+       FROM SEUSERTB
+       INNER JOIN SEUTECTB
+       ON SEUTECTB.SEUSER_CKEYUSER=USERS.EUSERTB.SEUSER_CKEYUSER
+       WHERE EUSERTB.SEUSER_CKEYUSER &lt;&gt; 'admin'
+       AND CEUTECTB.SEUSER_CKEYUSER=#{customerId}
+      </select> 
+       
+       
+    <!-- 
 	<insert id="insertAccount" parameterType="MutableAccount">
 		INSERT INTO USERS
 		(username,firstName,lastName,email,expiration,enabled)
 		VALUES
 		(#{username}, #{firstName}, #{lastName}, #{email}, '2099-12-31', #{enabled})
 	</insert>
+	-->
+	<!-- ORACLE DB INIZIO -->
+	<!--  
+	<insert id="insertAccount" parameterType="MutableAccount">
+	 INSERT INTO SEUSERTB
+		   (SEUSERTB.SEUSER_CKEYUSER,
+		    SEUSERTB.SEUSER_CUSERNAME,
+		    SEUSERTB.SEUSER_CCODFISC,
+		    SEUSERTB.SEUSER_CNOMEUSER,
+		    SEUSERTB.SEUSER_CCOGNUSER,
+		    
+		    
+		    
+		    
+		    SEUSERTB.SEUSER_CINDEMAIL,
+		    SEUSERTB.SEUSER_GDATASCAD,
+		    SEUSERTB.SEUSER_CUSRABIL)
+		   VALUES
+		   (#{usernameKey},#{username},#{codiceFiscale},#{firstName}, #{lastName},
+		    
+		   
+		   
+		    #{email}, '2099-12-31', #{enabled})
+    </insert>
+    -->
+	<!-- ORACLE DB FINE -->
+	<!-- ORACLE DB INIZIO -->
+	<insert id="insertAccount" parameterType="MutableAccount">
+	 INSERT INTO SEUSERTB
+		   (SEUSERTB.SEUSER_CKEYUSER,
+		    SEUSERTB.SEUSER_CUSERNAME,
+		    SEUSERTB.SEUSER_CCODFISC,
+		    SEUSERTB.SEUSER_CCOGNUSER,
+		    SEUSERTB.SEUSER_CNOMEUSER,
+		    SEUSERTB.SEUSER_GDATNASCITA,
+		    SEUSERTB.SEUSER_CCOMUNASCITA,
+		    SEUSERTB.SEUSER_DNASCEST,
+		    SEUSERTB.SEUSER_CCODTIPDOC,
+		    SEUSERTB.SEUSER_DNUMERODOC,
+		    SEUSERTB.SEUSER_DDESCENTE,
+		    SEUSERTB.SEUSER_GDATARILA,
+		    SEUSERTB.SEUSER_DRESESTERO,
+		    SEUSERTB.SEUSER_CINDIRIZZO,
+		    SEUSERTB.SEUSER_CCOMUNE,
+		    SEUSERTB.SEUSER_CFRAZIONE,
+		    SEUSERTB.SEUSER_CCAPCOMFISC,
+		    SEUSERTB.SEUSER_CPROVINCIA,
+		    SEUSERTB.SEUSER_CTELEFONO,
+		    SEUSERTB.SEUSER_CCELLULARE,
+		    SEUSERTB.SEUSER_CINDEMAIL,
+		    SEUSERTB.SEUSER_CPECDELEG,
+		    SEUSERTB.SEUSER_CFLAGGIUR,
+		    SEUSERTB.SEUSER_CFISCPIVAAZI,
+		    SEUSERTB.SEUSER_CDENOMIN,
+		    SEUSERTB.SEUSER_DSEDEESTERO,
+		    SEUSERTB.SEUSER_CINDAZIENDA,
+		    SEUSERTB.SEUSER_CCOMUAZIE,
+		    SEUSERTB.SEUSER_CFRAZAZIE,
+		    SEUSERTB.SEUSER_CCAPAZIEN,
+		    SEUSERTB.SEUSER_CPROVAZIEN,
+		    SEUSERTB.SEUSER_CTELEFONOAZI,
+		    SEUSERTB.SEUSER_CNUMEROFAX,
+		    SEUSERTB.SEUSER_CEMAILAZI,
+		    SEUSERTB.SEUSER_CPECAZIENDA,
+		    SEUSERTB.SEUSER_CUSRABIL,
+		    SEUSERTB.SEUSER_GDATAREG,
+		    SEUSERTB.SEUSER_GDATASCAD,
+		    SEUSERTB.SEUSER_GSCADCREDEN,
+		    SEUSERTB.SEUSER_NNUMTENTIVI,
+		    SEUSERTB.SEUSER_GULTIMOTENT,
+		    SEUSERTB.SEUSER_GULTIMOACC,
+		    SEUSERTB.SEUSER_COPERINS,
+		    SEUSERTB.SEUSER_GDATAINS,
+		    SEUSERTB.SEUSER_COPEUVAR,
+		    SEUSERTB.SEUSER_GDATUVAR
+		    )
+		   VALUES
+		   (#{chiavePrimariaTabellaUsers},
+		   #{username},
+		   #{codiceFiscale},
+		   #{lastName},
+		   #{firstName},
+		   #{dataPersonaFisicaODelegato},
+		   #{comuneNascitaPersonaFisicaODelegato},
+		   #{indicaSeNascitaAllEstero},
+		   #{tipoDocumento},
+		   #{numeroDocumento},
+		   #{descrizioneEnteCheRilasciaIlDocumento},
+		   #{dataRilascioDocumento},
+		   #{indicaSeIndirizzoAllEstero},
+		   #{indirizzoPersonaFisicaODelegato},
+		   #{comuneFiscalePersonaFisicaODelegato},
+		   #{frazioneDelComuneFiscalePersonaFisicaODelegato},
+		   #{ilCAPDelComuneFiscalePersonaFisicaODelegato},
+		   #{provinciaDelComuneFiscalePersonaFisicaODelegato},
+		   #{numeroTelefonicoPersonaFisicaODelegato},
+		   #{numeroCellularePersonaFisicaODelegato},
+		   #{email},
+		   #{eMailPECDelDelegatoPersonaFisica},
+		   #{naturaGiuridicaDellUtenza},
+		   #{codiceFiscalePIVADellAzienda},
+		   #{denominazioneAzienda},
+		   #{indicaSeSedeAllEstero},
+		   #{indirizzoAzienda},
+		   #{comuneFiscaleAzienda},
+		   #{frazioneDelComuneFiscaleDellAzienda},
+		   #{ilCAPFiscaleDellAzienda},
+		   #{provinciaDelComuneFiscaleDellAzienda},
+		   #{numeroTelefonicoAzienda},
+		   #{numeroFaxAzienda},
+		   #{eMailAzienda},
+		   #{eMailPECAzienda},
+		   #{indicaSeUtenzaAbilitata},
+		   #{dataRegistrazione},
+           #{dataScadenzaUser},
+           #{dataScadenzaCredenziali},
+           #{attempts},
+		   #{lastAttempt},
+		   #{dataUltimoAccesso},
+		   #{operatoreInserimento},
+		   CURRENT_TIMESTAMP,
+		   #{operatoreUltimaVariazione},
+		   #{dataUltimaVariazione}
+		   )
+    </insert>
+	<!-- ORACLE DB FINE -->
 	
+	<!-- 
 	<update id="updateAccount" parameterType="MutableAccount">
 	   UPDATE USERS
        SET firstName=#{firstName}
@@ -139,64 +543,320 @@
          , enabled=#{enabled}
        WHERE username=#{username}
 	</update>
-
+    -->
+    <!-- ORACLE DB INIZIO -->
+ <update id="updateAccount" parameterType="MutableAccount">
+  UPDATE SEUSERTB
+       SET SEUSERTB.SEUSER_CNOMEUSER=#{firstName}
+         , SEUSERTB.SEUSER_CUSERNAME=#{username}
+         , SEUSERTB.SEUSER_CCOGNUSER=#{lastName}
+         , SEUSERTB.SEUSER_CINDEMAIL=#{email}
+         , SEUSERTB.SEUSER_CUSRABIL=#{enabled}
+       WHERE SEUSERTB.SEUSER_CKEYUSER=#{chiavePrimariaTabellaUsers}
+ </update>
+<!-- ORACLE DB FINE -->
+<!--  
 	<update id="loginFailure" parameterType="string">
 	   UPDATE USERS
 	      SET attempts=attempts+1
 	        , lastAttempt=CURRENT TIMESTAMP
        WHERE username=#{username}
 	</update>
-	
-	<update id="resetAttempts" parameterType="string">
-	   UPDATE USERS
-	      SET attempts=0
-	        , lastAttempt=null
-       WHERE username=#{username}
-	</update>	
+-->
+<!-- ORACLE DB INIZIO -->
+<update id="loginFailure" parameterType="string">
+	   UPDATE SEUSERTB
+	      SET SEUSER_NNUMTENTIVI=SEUSER_NNUMTENTIVI+1
+	        , SEUSER_GULTIMOTENT=CURRENT_TIMESTAMP
+       WHERE SEUSER_CUSERNAME=#{username}
+	</update>
+<!-- ORACLE DB FINE -->
 
+<!-- ORACLE DB INIZIO -->
+	<update id="resetAttempts" parameterType="string">
+	    UPDATE SEUSERTB
+	      SET SEUSERTB.SEUSER_NNUMTENTIVI=SEUSERTB.SEUSER_NNUMTENTIVI+1
+	        , SEUSER_GULTIMOTENT=CURRENT_TIMESTAMP
+       WHERE SEUSERTB.SEUSER_CUSERNAME=#{username}
+	</update>	
+<!-- ORACLE DB FINE -->
+
+<!--  
 	<insert id="insertDefaultGroupMember" parameterType="string">
 		INSERT INTO GROUP_MEMBERS (group_id, username)
 		SELECT id,#{username} FROM GROUPS 
 		 WHERE group_name='users'
 	</insert>
-	
+-->	
+<!-- ORACLE DB INIZIO -->
+<insert id="insertDefaultGroupMember" parameterType="string">
+		INSERT INTO SEGRUUTB(SEGRUU_CKEYGRUU,SEGRUU_COPERINS,SEGRUU_GDATAINS,SEGRUU_COPEUVAR,SEGRUU_GDATUVAR,SEGRUP_CKEYGRUP,SEUTEC_CKEYUTEC)
+		   SELECT ?????????,'CAS',CURRENT_TIMESTAMP,#{chiavePrimariaTabellaUsers},SEUTEC_CKEYUTEC FROM SEGRUPTB 
+		   WHERE SEGRUPTB.SEGRUPTB='users'
+	</insert>
+<!-- ORACLE DB FINE -->
 
+<!-- 
 	<delete id="deleteGroupMember" parameterType="GroupMember">
 	    DELETE FROM GROUP_MEMBERS
 	     WHERE group_id = #{groupId}
 	       AND username = #{username}
 	</delete>
-	
+ -->
+ <!-- ORACLE DB INIZIO -->
+ <delete id="deleteGroupMember" parameterType="GroupMember">
+	    DELETE FROM SEGRUUTB
+	     WHERE SEGRUP_CKEYGRUP = #{chiavePrimariaDellaTabellaGruppi}
+	       AND SEUTEC_CKEYUTEC = #{chiavePrimariaDellaTabellaUtentiClienti}
+	</delete>
+ <!-- ORACLE DB FINE -->
+ <!--  
 	<delete id="insertGroupMember" parameterType="GroupMember">
 	    INSERT INTO GROUP_MEMBERS (group_id, username)
 		SELECT id,#{username} FROM GROUPS 
 		 WHERE group_name=#{groupName}
-	</delete>
-	
+	</delete> 
+-->
+ <!-- ORACLE DB INIZIO -->
+ <insert id="insertGroupMember" parameterType="GroupMember">
+	    INSERT INTO SEGRUUTB (SEGRUU_CKEYGRUU, SEGRUU_COPERINS,SEGRUU_GDATAINS,SEGRUU_COPEUVAR,SEGRUU_GDATUVAR,SEGRUP_CKEYGRUP,SEUTEC_CKEYUTEC)
+		VALUES(#{chiavePrimariaTabellaGruppiUtenti},#{operatoreInserimento},CURRENT_TIMESTAMP,#{operatoreUltimaVariazione},CURRENT_TIMESTAMP,(SELECT SEGRUPTB.SEGRUP_CKEYGRUP FROM SEGRUPTB WHERE SEGRUP_CKEYGRUP=#{chiavePrimariaDellaTabellaGruppi}),#{chiavePrimariaDellaTabellaUtentiClienti}) 
+	</insert> 
+ <!-- ORACLE DB FINE -->
+ <!-- 
 	<update id="updateGroupMember" parameterType="GroupMember">
 	  UPDATE GROUP_MEMBERS
 	   SET GROUP_MEMBERS.GROUP_ID=(SELECT GROUPS.ID FROM GROUPS WHERE GROUPS.GROUP_NAME=#{groupName})
 	   WHERE GROUP_MEMBERS.USERNAME=#{username}
 	</update>
-	
+ -->
+ <!-- ORACLE DB INIZIO -->
+ <update id="updateGroupMember" parameterType="GroupMember">
+	UPDATE SEGRUUTB
+	   SET SEGRUUTB.SEGRUP_CKEYGRUP=(SELECT SEGRUPTB.SEGRUP_CKEYGRUP FROM SEGRUPTB WHERE SEGRUPTB.SEGRUP_CCODGRUPPO=#{chiaveGruppo}),
+	   SEGRUU_GDATUVAR=CURRENT_TIMESTAMP
+	   WHERE SEGRUUTB.SEUTEC_CKEYUTEC=#{chiavePrimariaDellaTabellaUtentiClienti}
+	</update>
+  <!-- ORACLE DB FINE -->
+  <!--  
 	<delete id="deleteAccount" parameterType="string">
 	   DELETE FROM USERS
        WHERE USERS.USERNAME=#{username}
 	</delete>
+-->
 
+<!-- ORACLE DB INIZIO -->
+<delete id="deleteAccount" parameterType="string">
+  DELETE FROM SEUSERTB
+       WHERE SEUSERTB.SEUSER_CKEYUSER=#{SEUSER_CKEYUSER}
+</delete>
+<!-- ORACLE DB FINE -->
+
+<!--  
 	<update id="updateSignon" parameterType="Signon">
 		UPDATE SIGNON SET PASSWORD = #{password}
 		WHERE USERNAME = #{username}
 	</update>
-	
+-->
+<!-- ORACLE DB INIZIO -->
+    <update id="updateSignon" parameterType="Signon">
+	    UPDATE SEPWRDTB 
+	    SET SEPWRDTB.SEPWRD_CPASSWORD = #{passwordValidaDellUtenza},
+	    SEPWRD_GDATUVAR=CURRENT_TIMESTMP
+		WHERE SEUSER_CKEYUSER = #{chiavePrimariaTabellaUsers}
+	</update>
+<!-- ORACLE DB FINE -->
+<!-- 
 	<update id="updateCredentialsExpiration" parameterType="string">
 		UPDATE USERS SET CREDENTIALSEXPIRATION = CURRENT DATE+30 DAY
 		WHERE USERNAME = #{username}
 	</update>
-
+ -->
+<!-- ORACLE DB INIZIO -->
+    <update id="updateCredentialsExpiration" parameterType="string">
+		 UPDATE SEUSERTB SET SEUSERTB.SEUSER_GSCADCREDEN = SYSDATE +30
+		  WHERE SEUSERTB.SEUSER_CKEYUSER = #{username}
+	</update>
+<!-- ORACLE DB FINE -->
+<!--  
 	<insert id="insertSignon" parameterType="Signon">
 		INSERT INTO SIGNON (PASSWORD,USERNAME)
 		VALUES (#{password}, #{username})
 	</insert>
-			
+-->
+<!-- ORACLE DB INIZIO -->
+<insert id="insertSignon" parameterType="Signon">
+		INSERT INTO SEPWRDTB (SEPWRD_CKEYPWRD,
+		                    SEPWRD_CPASSWORD,
+		                    SEPWRD_CPASSWOLD,
+		                    SEPWRD_CPASSOLDO,
+		                    SEPWRD_COPERINS,
+		                    SEPWRD_GDATAINS,
+		                    SEPWRD_COPEUVAR,
+		                    SEPWRD_GDATUVAR,
+		                    SEUSER_CKEYUSER)
+		VALUES (#{chiaveTabellaDellePasswordDellUtenza}, 
+		        #{passwordValidaDellUtenza},
+		        #{ultimaPasswordValidaDellUtenza},
+		        #{penultimaPasswordValidaDellUtenza},
+		        #{operatoreInserimento},
+		        CURRENT_TIMESTAMP,
+		        #{operatoreUltimaVariazione},
+		        CURRENT_TIMESTAMP,
+		        #{chiavePrimariaTabellaUsers})
+</insert>
+<!-- ORACLE DB FINE -->
+
+
+<insert id="insertGroup" parameterType="Group">
+	    INSERT INTO SEGRUPTB (SEGRUP_CKEYGRUP, SEGRUP_CCODGRUPPO,SEGRUP_CDESGRUPPO,SEGRUP_COPERINS,SEGRUP_GDATAINS,SEGRUP_COPEUVAR,SEGRUP_GDATUVAR,SECUST_CKEYCUST)
+		VALUES(#{chiavePrimariaDellaTabellaGruppi},#{chiaveGruppo},#{descrizioneGruppo},#{operatoreInserimento},CURRENT_TIMESTAMP,#{operatoreUltimaVariazione},CURRENT_TIMESTAMP,#{chiavePrimariaDelCliente}) 
+</insert> 
+
+
+
+<!-- GESTIONE TABELLA LEGAME GRUPPOFUNZIONI -->
+
+<insert id="insertGruppoFunzione" parameterType="LegameGruppo">
+	    INSERT INTO SELGFNTB (SELGFN_CKEYLGFN, SELGFN_COPERINS,SELGFN_GDATAINS,SELGFN_COPEUVAR,SELGFN_GDATUVAR,SEGRUP_CKEYGRUP,SELFNS_CKEYLFNS)
+		VALUES(#{chiavePrimariaLegameGruppoApplicazioniModuloFunzioniSottoFunzioni},#{operatoreInserimento},#{dataInserimento},#{operatoreUltimaVariazione},#{dataUltimaVariazione},#{chiavePrimariaDellaTabellaGruppi},#{chiavePrimariaLegameApplicazioniFunzioniSottofunzioni}) 
+</insert> 
+
+<!-- GESTIONE TABELLA LEGAME FUNZIONI -->
+
+<insert id="insertLegameFunzione" parameterType="LegameFunzione">
+	    INSERT INTO SELFNSTB (SELFNS_CKEYLFNS, SELFNS_COPERINS,SELFNS_GDATAINS,SELFNS_COPEUVAR,SELFNS_GDATUVAR,SEAPPL_CKEYAPPL,SEMODU_CKEYMODU,SEFUNZ_CKEYFUNZ,SESFUN_CKEYSFUN)
+		VALUES(#{chiavePrimariaDelLegameApplicazioniFunzioniSottofunzioni},#{operatoreInserimento},CURRENT_TIMESTAMP,#{operatoreUltimaVariazione},CURRENT_TIMESTAMP,#{chiavePrimariaDelleApplicazioni},#{chiavePrimariaDeiModuliDelleApplicazioni},#{chiavePrimariaDelleFunzioni},#{chiavePrimariaDelleSottoFunzioni}) 
+</insert> 
+
+
+<!-- GESTIONE TABELLA MODULO -->
+<insert id="insertModulo" parameterType="Modulo">
+	    INSERT INTO SEMODUTB (SEMODU_CKEYMODU, SEMODU_CCODMODU,SEMODU_CDESCMODU,SEMODU_COPERINS,SEMODU_GDATAINS,SEMODU_COPEUVAR,SEMODU_GDATUVAR)
+		VALUES(#{chiavePrimariaDeiModuliDelleApplicazioni},#{codiceModulo},#{descrizioneModulo},#{operatoreInserimento},CURRENT_TIMESTAMP,#{operatoreUltimaVariazione},CURRENT_TIMESTAMP) 
+</insert> 
+
+<!-- GESTIONE TABELLA FUNZIONI -->
+<insert id="insertFunzione" parameterType="Funzione">
+	    INSERT INTO SEFUNZTB (SEFUNZ_CKEYFUNZ, SEFUNZ_CCODFUN,SEFUNZ_CDESCFUN,SEFUNZ_COPERINS,SEFUNZ_GDATAINS,SEFUNZ_COPEUVAR,SEFUNZ_GDATUVAR)
+		VALUES(#{chiavePrimariaDelleFunzioni},#{codiceFunzione},#{descrizioneFunzione},#{operatoreInserimento},CURRENT_TIMESTAMP,#{operatoreUltimaVariazione},CURRENT_TIMESTAMP) 
+</insert> 
+
+
+<!-- GESTIONE TABELLA SOTTO_FUNZIONI -->
+<insert id="insertSottoFunzione" parameterType="SottoFunzione">
+	    INSERT INTO SESFUNTB (SESFUN_CKEYSFUN, SESFUN_CCODSFU,SESFUN_CDESCSFU,SESFUN_COPERINS,SESFUN_GDATAINS,SESFUN_COPEUVAR,SESFUN_GDATUVAR)
+		VALUES(#{chiavePrimariaDelleSottoFunzioni},#{codiceSottoFunzione},#{descrizioneSottoFunzione},#{operatoreInserimento},CURRENT_TIMESTAMP,#{operatoreUltimaVariazione},CURRENT_TIMESTAMP) 
+</insert> 
+
+
+<!-- recupero account per id applicazione utente e cliente -->
+<select id="getAccountByCustomerUser" parameterType="UsernameClient" resultMap="accountComplete">
+SELECT  SEUSERTB.SEUSER_CKEYUSER,
+        SEUSERTB.SEUSER_CNOMEUSER,
+        SEUSERTB.SEUSER_CUSERNAME,
+        SEUSERTB.SEUSER_CCOGNUSER,
+        SEUSERTB.SEUSER_CINDEMAIL,
+        SEUSERTB.SEUSER_CCODFISC,
+        SEUSERTB.SEUSER_CUSRABIL,
+        SEUSERTB.SEUSER_GDATAREG,
+        SEUSERTB.SEUSER_GDATASCAD,
+        SEUSERTB.SEUSER_GSCADCREDEN,
+        SEUSERTB.SEUSER_NNUMTENTIVI,
+        SEUSERTB.SEUSER_GULTIMOTENT,
+        SEUTECTB.SECUST_CKEYCUST,
+        CONCAT(SEAPPLTB.SEAPPL_CCODAPP,'_')||COALESCE(CONCAT(SEMODUTB.SEMODU_CCODMODU,'_'),'') || COALESCE(CONCAT(SEFUNZTB.SEFUNZ_CCODFUN,'_'),'') || COALESCE(SESFUNTB.SESFUN_CCODSFU,'') as authority
+FROM SEUSERTB 
+INNER JOIN SEUTECTB
+ON SEUTECTB.SEUSER_CKEYUSER=SEUSERTB.SEUSER_CKEYUSER
+AND SEUTECTB.SECUST_CKEYCUST=#{customerId}
+INNER JOIN SEGRUUTB
+ON SEGRUUTB.SEUTEC_CKEYUTEC=SEUTECTB.SEUTEC_CKEYUTEC
+INNER JOIN SEGRUPTB
+ON SEGRUPTB.SEGRUP_CKEYGRUP=SEGRUPTB.SEGRUP_CKEYGRUP
+INNER JOIN SELGFNTB
+ON SELGFNTB.SEGRUP_CKEYGRUP=SEGRUPTB.SEGRUP_CKEYGRUP
+INNER JOIN SELFNSTB
+ON SELFNSTB.SELFNS_CKEYLFNS=SELGFNTB.SELFNS_CKEYLFNS
+INNER JOIN SEAPPLTB
+ON SEAPPLTB.SEAPPL_CKEYAPPL=SELFNSTB.SEAPPL_CKEYAPPL
+INNER JOIN SEMODUTB
+ON SEMODUTB.SEMODU_CKEYMODU=SELFNSTB.SEMODU_CKEYMODU
+INNER JOIN SEFUNZTB
+ON SEFUNZTB.SEFUNZ_CKEYFUNZ=SELFNSTB.SEFUNZ_CKEYFUNZ
+INNER JOIN SESFUNTB
+ON SESFUNTB.SESFUN_CKEYSFUN=SELFNSTB.SESFUN_CKEYSFUN
+WHERE SEUSERTB.SEUSER_CUSERNAME = #{username}
+</select>
+
+
+
+<select id="findURLBackByCustumerApplication" parameterType="customerApplication" resultType="string">	
+SELECT SEAPPC_CURLAPPLCLIENTE 
+FROM SEAPPCTB
+WHERE SEAPPL_CKEYAPPL=#{chiavePrimariaDelleApplicazioni}
+AND SECUST_CKEYCUST=#{chiavePrimariaDelCliente}
+</select>	
+
+<select id="getAccountByTicket" parameterType="string" resultMap="accountComplete">
+SELECT  SEUSERTB.SEUSER_CKEYUSER,
+        SEUSERTB.SEUSER_CNOMEUSER,
+        SEUSERTB.SEUSER_CUSERNAME,
+        SEUSERTB.SEUSER_CCOGNUSER,
+        SEUSERTB.SEUSER_CINDEMAIL,
+        SEUSERTB.SEUSER_CCODFISC,
+        SEUSERTB.SEUSER_CUSRABIL,
+        SEUSERTB.SEUSER_GDATAREG,
+        SEUSERTB.SEUSER_GDATASCAD,
+        SEUSERTB.SEUSER_GSCADCREDEN,
+        SEUSERTB.SEUSER_NNUMTENTIVI,
+        SEUSERTB.SEUSER_GULTIMOTENT,
+        SEUTECTB.SECUST_CKEYCUST,
+        CONCAT(SEAPPLTB.SEAPPL_CCODAPP,'_')||COALESCE(CONCAT(SEMODUTB.SEMODU_CCODMODU,'_'),'') || COALESCE(CONCAT(SEFUNZTB.SEFUNZ_CCODFUN,'_'),'') || COALESCE(SESFUNTB.SESFUN_CCODSFU,'') as authority
+FROM SEUSERTB 
+INNER JOIN SEUTECTB
+ON SEUTECTB.SEUSER_CKEYUSER=SEUSERTB.SEUSER_CKEYUSER
+INNER JOIN SECUSTTB
+ON SECUSTTB.SECUST_CKEYCUST=SEUTECTB.SECUST_CKEYCUST
+INNER JOIN SEAPPCTB
+ON SEAPPCTB.SECUST_CKEYCUST=SECUSTTB.SECUST_CKEYCUST
+INNER JOIN SEAPPLTB
+ON SEAPPLTB.SEAPPL_CKEYAPPL=SEAPPCTB.SEAPPL_CKEYAPPL
+INNER JOIN SEGRUUTB
+ON SEGRUUTB.SEUTEC_CKEYUTEC=SEUTECTB.SEUTEC_CKEYUTEC
+INNER JOIN SEGRUPTB
+ON SEGRUPTB.SEGRUP_CKEYGRUP=SEGRUPTB.SEGRUP_CKEYGRUP
+INNER JOIN SELGFNTB
+ON SELGFNTB.SEGRUP_CKEYGRUP=SEGRUPTB.SEGRUP_CKEYGRUP
+INNER JOIN SELFNSTB
+ON SELFNSTB.SELFNS_CKEYLFNS=SELGFNTB.SELFNS_CKEYLFNS
+INNER JOIN SEAPPLTB
+ON SEAPPLTB.SEAPPL_CKEYAPPL=SELFNSTB.SEAPPL_CKEYAPPL
+INNER JOIN SEMODUTB
+ON SEMODUTB.SEMODU_CKEYMODU=SELFNSTB.SEMODU_CKEYMODU
+INNER JOIN SEFUNZTB
+ON SEFUNZTB.SEFUNZ_CKEYFUNZ=SELFNSTB.SEFUNZ_CKEYFUNZ
+INNER JOIN SESFUNTB
+ON SESFUNTB.SESFUN_CKEYSFUN=SELFNSTB.SESFUN_CKEYSFUN
+INNER JOIN SETICKTB
+ON SETICKTB.SETICK_CKEYTICK = #{idTicket}
+AND  SETICKTB.SETICK_CUSERNAME=SEUSERTB.SEUSER_CUSERNAME
+AND  SETICKTB.SETICK_CCODFISC=SEUSERTB.SEUSER_CCODFISC
+</select>
+
+
+<select id="getCodiceFiscaleFromUserApplication" parameterType="UserApplication" resultType="string">
+SELECT SEUSER_CCODFISC 
+FROM SEUSERTB 
+INNER JOIN SEUTECTB 
+ON SEUTECTB.SEUSER_CKEYUSER=SEUSERTB.SEUSER_CKEYUSER 
+INNER JOIN SECUSTTB 
+ON SECUSTTB.SECUST_CKEYCUST=SEUTECTB.SECUST_CKEYCUST 
+INNER JOIN SEAPPCTB 
+ON SEAPPCTB.SECUST_CKEYCUST=SECUSTTB.SECUST_CKEYCUST 
+INNER JOIN SEAPPLTB ON SEAPPLTB.SEAPPL_CKEYAPPL=SEAPPCTB.SEAPPL_CKEYAPPL 
+WHERE SEUSERTB.SEUSER_CUSERNAME=#{username} 
+AND SEAPPLTB.SEAPPL_CKEYAPPL=#{applicationId}
+</select>
+
 </mapper>

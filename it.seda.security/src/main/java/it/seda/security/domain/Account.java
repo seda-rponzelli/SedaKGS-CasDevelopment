@@ -19,8 +19,6 @@ import org.codehaus.jackson.map.annotate.JsonRootName;
  *
  */
 @SuppressWarnings("serial")
-@JsonIgnoreProperties({ "locked" })
-@JsonRootName(value="account")
 public class Account extends AbstractAccount {
 
 	// let us put max failed login attempts at 5

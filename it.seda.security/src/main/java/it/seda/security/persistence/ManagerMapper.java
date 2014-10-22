@@ -6,6 +6,7 @@ import it.seda.security.domain.Application;
 import it.seda.security.domain.Customer;
 import it.seda.security.domain.CustomerApplication;
 import it.seda.security.domain.CustomerUser;
+import it.seda.security.domain.Group;
 
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Repository;
@@ -49,5 +50,8 @@ public interface ManagerMapper {
 	void deleteCustomerApplication(CustomerApplication customerApplication);
 	List<CustomerApplication> listCustomerApplication(String customerId, RowBounds rowBounds);
 	int listCustomerApplicationCount(String customerId);
+	
+	String getCustomerIdByURI(String uri);
+	
 	
 }

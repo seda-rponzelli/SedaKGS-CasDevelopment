@@ -1,6 +1,7 @@
 package it.seda.security.authentication;
 
 import it.seda.security.domain.Account;
+import it.seda.security.domain.UsernameClient;
 import it.seda.security.service.SecurityService;
 
 import java.util.Date;
@@ -40,7 +41,11 @@ public class AuthenticationFailureListener implements ApplicationListener<Authen
 
 		String username = event.getAuthentication().getName();
 		
-		Account user = securityService.getAccountByUserName(username);
+		String customerId=(String) resolveRequest().getSession().getAttribute("customerId");
+		UsernameClient usernameClient=new UsernameClient(username,customerId);
+		
+		
+		Account user = securityService.getAccountByCustomerUser(usernameClient);
 		if (user!=null) {
 			Date lastAttempt = user.getLastAttempt();
 			if (lastAttempt==null) {

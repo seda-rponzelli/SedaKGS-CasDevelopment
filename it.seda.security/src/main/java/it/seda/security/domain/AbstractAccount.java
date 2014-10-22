@@ -16,8 +16,10 @@ import java.util.Date;
 public abstract class AbstractAccount implements Serializable {
 
 	protected String username;
+	protected String customerId;
 	protected String firstName;
 	protected String lastName;
+	protected String codiceFiscale;;
 	protected String email;
 	protected boolean enabled;
 	protected short attempts;
@@ -47,7 +49,7 @@ public abstract class AbstractAccount implements Serializable {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
+ 
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -69,12 +71,32 @@ public abstract class AbstractAccount implements Serializable {
 	public void setLastAttempt(Date lastAttempt) {
 		this.lastAttempt = lastAttempt;
 	}
+	
+	
+	public String getCodiceFiscale() {
+		return codiceFiscale;
+	}
+	public void setCodiceFiscale(String codiceFiscale) {
+		this.codiceFiscale = codiceFiscale;
+	}
+	
+	
+	public String getIdCliente() {
+		return customerId;
+	}
+	public void setIdCliente(String idCliente) {
+		this.customerId = idCliente;
+	}
 	@Override
 	public String toString() {
-		return "AccountTO [username=" + username + ", firstName=" + firstName
-				+ ", lastName=" + lastName + ", email=" + email
-				+ ", enabled=" + enabled + ", attempts=" + attempts 
-				+ ", isLocked()=" + isLocked() + "]";
+		return "AbstractAccount [username=" + username + ", idCliente="
+				+ customerId + ", firstName=" + firstName + ", lastName="
+				+ lastName + ", codiceFiscale=" + codiceFiscale + ", email="
+				+ email + ", enabled=" + enabled + ", attempts=" + attempts
+				+ ", lastAttempt=" + lastAttempt + "]";
 	}
+	
+	
+	
 	
 }
