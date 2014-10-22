@@ -13,18 +13,23 @@
 
 	<!-- business datasource -->
 	<!-- Security datasource is the same of business application -->
-	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-		<property name="jndiName" value="java:comp/env/jdbc/CASDataSource" />
+	
+	<bean id="dataSourceOracle" class="org.springframework.jndi.JndiObjectFactoryBean">
+		  <property name="jndiName" value="java:comp/env/jdbc/CASOracleDataSource" /> 
 	</bean>
-
+	<!--  
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		  <property name="jndiName" value="java:comp/env/jdbc/CASDataSource" /> 
+	</bean>
+    -->
 	<!-- transaction manager, use JtaTransactionManager for global tx -->
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource" />
+		<property name="dataSource" ref="dataSourceOracle" />
 	</bean>
 
 	<!-- define the SqlSessionFactory -->
 	<bean id="sqlSessionFactoryBusiness" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="dataSource" ref="dataSource" />
+		<property name="dataSource" ref="dataSourceOracle" />
 		<property name="typeAliasesPackage" value="it.seda.security.domain" />
 	</bean>
 

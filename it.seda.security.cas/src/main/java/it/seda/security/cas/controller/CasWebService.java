@@ -11,10 +11,12 @@ import java.util.List;
 import it.seda.security.authentication.UserDetailsAdapter;
 import it.seda.security.domain.Account;
 import it.seda.security.domain.Authority;
+import it.seda.security.service.SecurityService;
 import it.seda.security.service.TicketService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
 
 
 
@@ -45,27 +47,32 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class CasWebService {
 	
 	@Autowired TicketService ticketService;
+	@Autowired SecurityService securityService;
 	
 	@RequestMapping(value="{ticket}", method = RequestMethod.GET)
 	public String getUserDetailsAdapter(@PathVariable String ticket, ModelMap model) {
 		
-		UserDetails userDetails; 
+//		UserDetails userDetails; 
 		Account account=null;
 		try{
 			//userDetails=(UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();	
-			account=new Account();
-			account.setFirstName("Name");
-			List<Authority> authorities=new ArrayList<Authority>();
-			account.setAuthorities(authorities);
-			account.setExpiration(new Date());
-			account.setCredentialsExpiration(new Date());
-			userDetails = new UserDetailsAdapter(account);	
-			
+//			account=new Account();
+//			account.setFirstName("Name");
+//			List<Authority> authorities=new ArrayList<Authority>();
+//			account.setAuthorities(authorities);
+//			account.setExpiration(new Date());
+//			account.setCredentialsExpiration(new Date());
+//			userDetails = new UserDetailsAdapter(account);	
+			/////from ticket
+			///
+			////
+			account=securityService.getAccountByTicket(ticket);
+//			userDetails = new UserDetailsAdapter(account);	
 		}catch(Exception e){
-			userDetails=null;
+			account=null;
 		}
 		//model.addAttribute("accountJson", account);
-		model.addAttribute("account", account);
+		model.addAttribute("Account", account);
 		return null;
 	}
 

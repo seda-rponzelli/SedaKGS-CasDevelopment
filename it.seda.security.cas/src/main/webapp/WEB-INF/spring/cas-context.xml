@@ -63,7 +63,7 @@
 	  <property name="defaultViews">
 		<list>
 			  <!-- JSON View -->
-		  <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">  </bean>
+		  <bean class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">  </bean>
  		 </list>
 	  </property>
 	  <property name="ignoreAcceptHeader" value="true" />

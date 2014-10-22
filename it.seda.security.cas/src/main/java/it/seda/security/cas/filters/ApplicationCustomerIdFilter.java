@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession;
  * @author lmontesi
  *
  */
-public class ApplicationIdFilter implements Filter{
+public class ApplicationCustomerIdFilter implements Filter{
 
     @Override
     public void destroy() {
@@ -31,9 +31,14 @@ public class ApplicationIdFilter implements Filter{
 
             HttpServletRequest request = (HttpServletRequest) req;
             HttpSession session=request.getSession();
+            
             String applicationId = request.getParameter("applicationId");
             if (applicationId != null) {
             	session.setAttribute("applicationId", applicationId);
+            }
+            String customerId = request.getParameter("customerId");
+            if (customerId != null) {
+            	session.setAttribute("customerId", customerId);
             }
             chain.doFilter(req, res);
 

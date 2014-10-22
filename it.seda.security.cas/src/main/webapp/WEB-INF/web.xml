@@ -19,7 +19,7 @@
 	<!-- application id filter --> 
 	<filter>
 		<filter-name>requestApplicatiopnIdtFilter</filter-name>
-		<filter-class>it.seda.security.cas.filters.ApplicationIdFilter</filter-class>
+		<filter-class>it.seda.security.cas.filters.ApplicationCustomerIdFilter</filter-class>
 	</filter>
 	
 	<filter-mapping>
