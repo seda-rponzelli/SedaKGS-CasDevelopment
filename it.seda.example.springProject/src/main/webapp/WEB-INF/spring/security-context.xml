@@ -51,6 +51,8 @@
   <http entry-point-ref="casEntryPoint" authentication-manager-ref="authenticationManager" auto-config="true" use-expressions="true">
 		<intercept-url pattern="/manager/**" access="isAuthenticated()"/>
      <custom-filter position="CAS_FILTER" ref="casAuthenticationFilter" />
+     <logout logout-success-url="/events/welcome" 
+				logout-url="/manager"/>
   </http>
 
   <beans:bean id="casAuthenticationFilter"
