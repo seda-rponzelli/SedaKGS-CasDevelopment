@@ -4,6 +4,7 @@ import it.seda.security.authentication.UserDetailsAdapter;
 import it.seda.security.cas.authentication.CasAuthenticationEntryPoint;
 import it.seda.security.domain.Application;
 import it.seda.security.domain.CustomerApplication;
+import it.seda.security.domain.CustomerCodeApplication;
 import it.seda.security.domain.Ticket;
 import it.seda.security.service.ManagerService;
 import it.seda.security.service.SecurityService;
@@ -57,8 +58,12 @@ public class SedaAuthenticationSuccessHandler implements AuthenticationSuccessHa
 		
 		customerId=(String) request.getSession().getAttribute("customerId");
 		
-		CustomerApplication customerApplication=new CustomerApplication("","", "",new Date(), "",new Date(),applicationId,customerId);
-		urlBack = setUrlBack(customerApplication);
+		//CustomerApplication customerApplication=new CustomerApplication("","", "",new Date(), "",new Date(),applicationId,customerId);
+		//urlBack = setUrlBack(customerApplication);
+		
+		
+		CustomerCodeApplication customerCodeApplication = new CustomerCodeApplication(customerId,applicationId);
+		urlBack = setUrlBack(customerCodeApplication);
 		//String ticket = "TICKET";
 		logger.debug("Login completed. ApplicationId= "+applicationId+" .CustomerId= "+customerId+" .UrlBack"+urlBack+"...");
 		
@@ -100,6 +105,12 @@ public class SedaAuthenticationSuccessHandler implements AuthenticationSuccessHa
     /*va presa dal DB*/
     protected String setUrlBack(CustomerApplication customerApplication){
         String urlBack=securityService.findURLBackByCustumerApplication(customerApplication);
+        return  urlBack;	
+		//return "http://localhost:8080/it.seda.example.springProject";	
+    }
+    
+    protected String setUrlBack(CustomerCodeApplication customerCodeApplication){
+        String urlBack=securityService.findURLBackByCustumerCodeApplication(customerCodeApplication);
         return  urlBack;	
 		//return "http://localhost:8080/it.seda.example.springProject";	
     }
