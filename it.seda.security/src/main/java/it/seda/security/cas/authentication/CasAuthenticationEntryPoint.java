@@ -1,31 +1,20 @@
 
 package it.seda.security.cas.authentication;
 
-import it.seda.security.authentication.RefreshContextListener;
+
 import it.seda.security.authentication.UserDetailsAdapter;
 import it.seda.security.cas.CommonUtils;
 import it.seda.security.cas.ServiceProperties;
 import it.seda.security.domain.Account;
 import it.seda.security.domain.Application;
 import it.seda.security.service.ManagerService;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-
-
-
-
-
-
-
-
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -37,10 +26,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
@@ -67,7 +54,7 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
 	@Autowired protected ManagerService managerService;
 	@Autowired protected UserDetailsService userDetailsService;
 
-	
+	private String ID_CLIENTE="customerId";
 	private ServiceProperties serviceProperties;
 	
 	private static final Logger logger = LoggerFactory.getLogger(CasAuthenticationEntryPoint.class);
@@ -179,13 +166,13 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
 	}
 
 
-    private void saveApplicationId(HttpServletRequest servletRequest) {
-	
-    	RestTemplate restTemplate = new RestTemplate();
-
-    	restTemplate.put(urlEncodedService+"/casws/"+applicationId, applicationId);
-		
-	}
+//    private void saveApplicationId(HttpServletRequest servletRequest) {
+//	
+//    	RestTemplate restTemplate = new RestTemplate();
+//
+//    	restTemplate.put(urlEncodedService+"/casws/"+applicationId, applicationId);
+//		
+//	}
     
     protected void submitTicket(HttpServletRequest servletRequest,HttpServletResponse response) throws IOException {
 		HttpSession session=servletRequest.getSession();
@@ -194,7 +181,8 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
     	if (ticket== null)  {
     		
     		String applicationCustomerURl=servletRequest.getRequestURL().toString();
-    		customerId=managerService.getCustomerIdByURI(applicationCustomerURl);
+    		//customerId=managerService.getCustomerIdByURI(applicationCustomerURl);
+    		customerId=getCustomerIdFromRequest(servletRequest);
     	    logger.debug("applicationId = "+applicationId +"  customerId= "+customerId +". Unknown login request.");
     		response.sendRedirect(concatApplicationIdToUrl(applicationId,customerId));
     		return;
@@ -268,7 +256,14 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
 	}
 	
 	
-	
+	private String getCustomerIdFromRequest(HttpServletRequest request){
+		 
+		customerId=(String) request.getSession().getAttribute(ID_CLIENTE);
+		if(customerId==null){
+			logger.debug("missing request parameter customerId");
+		}
+		return customerId;
+	}
 	
 	
 }

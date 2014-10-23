@@ -23,6 +23,10 @@ public class TicketRequestFilter extends OncePerRequestFilter{
          if (ticket != null) {
          	session.setAttribute("ticket", ticket);
          }
+         String customerId = request.getParameter("customerId");
+         if (customerId != null) {
+         	session.setAttribute("customerId", customerId);
+         }
          filterChain.doFilter(req, res);	
 	}
 

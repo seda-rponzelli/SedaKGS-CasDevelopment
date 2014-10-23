@@ -2,6 +2,7 @@ package it.seda.security.persistence;
 
 import it.seda.security.domain.Account;
 import it.seda.security.domain.CustomerApplication;
+import it.seda.security.domain.CustomerCodeApplication;
 import it.seda.security.domain.CustomerUser;
 import it.seda.security.domain.Funzione;
 import it.seda.security.domain.Group;
@@ -36,7 +37,7 @@ public interface SecurityMapper {
 	void updateAccount(MutableAccount account);
 	void deleteAccount(String username);
 	void loginFailure(String username);	
-	void resetAttempts(String username);
+	void resetAttempts(MutableAccount mutableAccount);
 	
 	void insertDefaultGroupMember(String username);
 	void insertAdminGroupMember(String username);
@@ -68,7 +69,13 @@ public interface SecurityMapper {
 	
 	String findURLBackByCustumerApplication(CustomerApplication customerApplication);
 	
+	String findURLBackByCustumerCodeApplication(CustomerCodeApplication customerCodeApplication);
+	
 	Account  getAccountByTicket(String idTicket);
 	
 	String getCodiceFiscaleFromUserApplication(UserApplication userApplication);
+	
+	boolean isTicketValid(String idTicket);
+	
+	String getCodiceFiscaleFromUsernameClient(UsernameClient usernameClient);
 }

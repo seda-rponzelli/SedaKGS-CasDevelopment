@@ -36,7 +36,8 @@
    <resultMap id="customerUser" type="CustomerUser">
         <id property="chiaveTabellaRelazioneUserCliente" column="SEUTEC_CKEYUTEC" />
 		<id property="chiavePrimariaDelCliente" column="SECUST_CKEYCUST" />	
-		<id property="chiavePrimariaTabellaUsers" column="SEUSER_CKEYUSER" />
+		<result property="username" column="SEUSER_CUSERNAME" />
+		<result property="codicefiscale" column="SEUSER_CCODFISC" />
 		<result property="operatoreInserimento" column="SEUTEC_COPERINS" />
 		<result property="dataInserimento" column="SEUTEC_GDATAINS" />
 		<result property="operatoreUltimaVariazione" column="SEUTEC_COPEUVAR" />
@@ -224,14 +225,17 @@
 	                         SEUTEC_COPEUVAR,
 	                         SEUTEC_GDATUVAR,
 	                         SECUST_CKEYCUST,
-	                         SEUSER_CKEYUSER)
+	                         SEUSER_CUSERNAME,
+	                         SEUSER_CCODFISC)
 	   VALUES (#{chiaveTabellaRelazioneUserCliente},
 	           #{operatoreInserimento},
 	           CURRENT_TIMESTAMP,
 	           #{operatoreUltimaVariazione},
 	           CURRENT_TIMESTAMP,
 	           #{chiavePrimariaDelCliente},
-	           #{chiavePrimariaTabellaUsers})
+	           #{username},
+	           #{codiceFiscale}
+	           )
 	</insert>
 	<!-- ORACLE DB FINE -->
 	<!--  

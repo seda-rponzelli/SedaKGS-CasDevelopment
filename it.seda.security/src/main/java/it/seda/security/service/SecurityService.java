@@ -12,6 +12,7 @@ import it.seda.security.domain.Account;
 import it.seda.security.domain.Application;
 import it.seda.security.domain.Customer;
 import it.seda.security.domain.CustomerApplication;
+import it.seda.security.domain.CustomerCodeApplication;
 import it.seda.security.domain.CustomerUser;
 import it.seda.security.domain.Funzione;
 import it.seda.security.domain.LegameFunzione;
@@ -24,6 +25,7 @@ import it.seda.security.domain.Signon;
 import it.seda.security.domain.SottoFunzione;
 import it.seda.security.domain.UsernameClient;
 import it.seda.security.service.exceptions.DuplicateAccountException;
+import it.seda.security.service.exceptions.ExperedTicketException;
 import it.seda.security.persistence.ManagerMapper;
 import it.seda.security.persistence.SecurityMapper;
 
@@ -85,13 +87,21 @@ public class SecurityService {
 		return securityMapper
 				.findURLBackByCustumerApplication(customerApplication);
 	}
+	
+	@Transactional(readOnly = true)
+	public String findURLBackByCustumerCodeApplication(
+			CustomerCodeApplication customerCodeApplication) {
+		return securityMapper
+				.findURLBackByCustumerCodeApplication(customerCodeApplication);
+	}
+	
 
 	public void reportLoginFailure(String username) {
 		securityMapper.loginFailure(username);
 	}
 
-	public void restoreAttempts(String username) {
-		securityMapper.resetAttempts(username);
+	public void restoreAttempts(MutableAccount mutableAccount) {
+		securityMapper.resetAttempts(mutableAccount);
 	}
 
 	public void insertAccount(MutableAccount mutable) {
@@ -133,7 +143,8 @@ public class SecurityService {
 				mutable.getOperatoreUltimaVariazione(),
 				mutable.getDataUltimaVariazione(),
 				customer.getChiavePrimariaCliente(),
-				mutable.getChiavePrimariaTabellaUsers());
+				mutable.getUsername(),
+				mutable.getCodiceFiscale());
 
 		// GROUP_MEMBER SEGRUUTB
 		GroupMember gm = new GroupMember();
@@ -149,10 +160,11 @@ public class SecurityService {
 		gm.setOperatoreUltimaVariazione(mutable.getOperatoreUltimaVariazione());
 
 		try {
+			//SEUSERTB
 			securityMapper.insertAccount(mutable);
-			// DEFAULT CUSTUMER_INIZIO
+			// DEFAULT CUSTUMER_INIZIO SECUSTTB
 			managerMapper.insertCustomer(customer);
-			// DEFAULT CUSTUMER_FINE
+			// DEFAULT CUSTUMER_FINE SEUTECTB
 			managerMapper.insertCustomerUser(cu);
 
 			// DEFAULT GROUP INIZIO
@@ -294,7 +306,16 @@ public class SecurityService {
 
 	@Transactional(readOnly = true)
 	public Account getAccountByTicket(String idTicket) {
+		if(securityMapper.isTicketValid(idTicket)){
 		return securityMapper.getAccountByTicket(idTicket);
+		}
+		logger.debug("Ticket is expired");
+		throw new ExperedTicketException(idTicket);
+	}
+	
+	@Transactional(readOnly = true)
+	public String getCodiceFiscaleFromUsernameClient(UsernameClient usernameClient){
+		return securityMapper.getCodiceFiscaleFromUsernameClient(usernameClient);
 	}
 
 }

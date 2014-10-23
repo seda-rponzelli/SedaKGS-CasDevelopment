@@ -3,6 +3,7 @@ package it.seda.security.authentication;
 import javax.servlet.http.HttpServletRequest;
 
 import it.seda.security.domain.Account;
+import it.seda.security.domain.MutableAccount;
 import it.seda.security.domain.UsernameClient;
 import it.seda.security.service.SecurityService;
 
@@ -39,7 +40,14 @@ public class AuthenticationSuccessListener implements ApplicationListener<Authen
 
 		
 		if (account!=null) {
-			securityService.restoreAttempts(username);
+			String codiceFiscale=securityService.getCodiceFiscaleFromUsernameClient(usernameClient);
+			MutableAccount mutableAccount=new MutableAccount();
+			mutableAccount.init();
+			short attempts=(short) 0;
+			mutableAccount.setAttempts(attempts);
+			mutableAccount.setUsername(username);
+			mutableAccount.setCodiceFiscale(codiceFiscale);
+			securityService.restoreAttempts(mutableAccount);
 		}
 
 	}
