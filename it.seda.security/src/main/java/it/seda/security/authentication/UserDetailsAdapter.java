@@ -101,5 +101,10 @@ public class UserDetailsAdapter implements UserDetails {
 	public boolean isEnabled() {
 		return account.isEnabled();
 	}
+	
+	public String getCustomerId(){
+		return account.getCustomerId();
+	}
+	
 
 }

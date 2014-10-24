@@ -64,6 +64,10 @@ public class Account extends AbstractAccount {
 		return credentialsExpiration.before(date);
 	}
 	
+	public String getCustomerId(){
+		return customerId;
+	}
+	
 	
 	@Override
 	public String toString() {
