@@ -71,6 +71,12 @@ public class CasWebService {
 	}
 	
 	
+	@RequestMapping(value="{username}/{customerId}", method = RequestMethod.GET)
+	public String performSingleSignOut(@PathVariable String username,@PathVariable String customerId,ModelMap model) {
+	
+	
+		return null;
+	}
 	
 
 	

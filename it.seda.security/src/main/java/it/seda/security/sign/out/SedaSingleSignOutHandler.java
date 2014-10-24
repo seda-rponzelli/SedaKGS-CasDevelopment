@@ -77,16 +77,17 @@ public class SedaSingleSignOutHandler {
             logger.debug("No session currently exists (and none created).  Cannot record session information for single sign out.");
             return;
         }
-        Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsAdapter userDetailsAdapter=(UserDetailsAdapter) authentication.getPrincipal();
-        String username=userDetailsAdapter.getUsername();
-        String customerId=userDetailsAdapter.getCustomerId();
-        UsernameClient usernameClient=new UsernameClient(username,customerId);
-        if(customerId==null||usernameClient==null){
-        	 logger.debug("No customer user available.");
+//        Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
+//        UserDetailsAdapter userDetailsAdapter=(UserDetailsAdapter) authentication.getPrincipal();
+//        String username=userDetailsAdapter.getUsername();
+//        String customerId=userDetailsAdapter.getCustomerId();
+        String ticket=(String) session.getAttribute("ticket");
+        //UsernameClient usernameClient=new UsernameClient(username,customerId);
+        if(ticket==null){
+        	 logger.debug("No customer ticket available.");
              return;
         }
-        logger.debug("Recording session for customerId {} and username" , customerId, username);
+        logger.debug("Recording session for ticket {} " , ticket);
 
         try {
         	removeSessionFromMapById(session.getId());
@@ -94,7 +95,7 @@ public class SedaSingleSignOutHandler {
         } catch (final Exception e) {
             // ignore if the session is already marked as invalid.  Nothing we can do!
         }
-        sessionMappingStorage.put(customerId, session);
+        sessionMappingStorage.put(ticket, session);
     }
 	
 	@SuppressWarnings("unchecked")
@@ -115,10 +116,10 @@ public class SedaSingleSignOutHandler {
 	
 	//We delete al records containing the username customerId stored in the posted request from the CAS
 	public void destroySession(final HttpServletRequest request) {
-		String username=request.getParameter("username");
-		String customerId=request.getParameter("customerId");
-		UsernameClient usernameCustomer=new UsernameClient(username,customerId);
-		HttpSession session = (HttpSession) sessionMappingStorage.get(usernameCustomer);
+		String ticket=request.getParameter("ticket");
+		//String customerId=request.getParameter("customerId");
+		//UsernameClient usernameCustomer=new UsernameClient(username,customerId);
+		HttpSession session = (HttpSession) sessionMappingStorage.get(ticket);
 		if (session != null) {
             String sessionID = session.getId();
             try {
@@ -141,7 +142,7 @@ public class SedaSingleSignOutHandler {
 	
 	public boolean isTokenRequest(HttpServletRequest request){
 		final HttpSession session = request.getSession(false);
-		if(session.getAttribute("customerId")!=null){
+		if(session.getAttribute("ticket")!=null){
 			return true;
 		}
 		return false;
