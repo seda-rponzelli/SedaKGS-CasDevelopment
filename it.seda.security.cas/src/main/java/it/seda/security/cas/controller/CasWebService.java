@@ -51,23 +51,10 @@ public class CasWebService {
 	
 	@RequestMapping(value="{ticket}", method = RequestMethod.GET)
 	public String getUserDetailsAdapter(@PathVariable String ticket, ModelMap model) {
-		
-//		UserDetails userDetails; 
+	
 		Account account=null;
 		try{
-			//userDetails=(UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();	
-//			account=new Account();
-//			account.setFirstName("Name");
-//			List<Authority> authorities=new ArrayList<Authority>();
-//			account.setAuthorities(authorities);
-//			account.setExpiration(new Date());
-//			account.setCredentialsExpiration(new Date());
-//			userDetails = new UserDetailsAdapter(account);	
-			/////from ticket
-			///
-			////
 			account=securityService.getAccountByTicket(ticket);
-//			userDetails = new UserDetailsAdapter(account);	
 		}catch(Exception e){
 			account=null;
 		}
@@ -82,6 +69,9 @@ public class CasWebService {
 		session.setAttribute("applicationId", applicationId);
 		return "";
 	}
+	
+	
+	
 
 	
 }

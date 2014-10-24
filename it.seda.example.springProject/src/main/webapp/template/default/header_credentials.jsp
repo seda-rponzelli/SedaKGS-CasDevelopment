@@ -12,7 +12,7 @@
 			<c:if test="${!authenticated}">${x:i18n('application.welcome')}</c:if>
 		</td>
 		<td>
-			<c:if test="${authenticated}"><a href="<c:url value="/security/logout" />">Logout</a></c:if>
+			<c:if test="${authenticated}"><a href="<c:url value="j_spring_security_logout" />">Logout</a></c:if>
 		</td>
 	</tr>
 	<tr>
