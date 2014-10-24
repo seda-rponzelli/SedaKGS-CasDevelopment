@@ -27,7 +27,6 @@ public class SedaSingleSignOutHandler {
 	private final Logger logger = LoggerFactory.getLogger(SedaSingleSignOutHandler.class);
 	final static String WEB_APP_LOGOUT_URL="j_spring_security_logout";
 	final static String CAS_LOGOUT_URL="j_spring_security_cas_logout";
-	/** Mapping of token IDs and session IDs to HTTP sessions */
     private HashMap sessionMappingStorage = new HashMap();
    // private boolean tockenFlag=true;
 	
@@ -148,4 +147,13 @@ public class SedaSingleSignOutHandler {
 		return false;
 	}
 
+	
+	public String getCASWebServiceURL(String url){
+		Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsAdapter userDetailsAdapter=(UserDetailsAdapter) authentication.getPrincipal();
+        String username=userDetailsAdapter.getUsername();
+        String customerId=userDetailsAdapter.getCustomerId();
+        url=url.concat("/").concat(username).concat("/").concat(customerId);
+        return url;
+	}
 }

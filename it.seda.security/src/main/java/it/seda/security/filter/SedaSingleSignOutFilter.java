@@ -48,7 +48,7 @@ public class SedaSingleSignOutFilter  implements Filter {
 		 final HttpServletRequest request = (HttpServletRequest) servletRequest;
 	     final HttpServletResponse response = (HttpServletResponse) servletResponse;
 	     if(HANDLER.isApplicationLogoutRequst(request)){
-	     response.sendRedirect(casURL);
+	     response.sendRedirect(HANDLER.getCASWebServiceURL(casURL));
 	     }else if(HANDLER.isCASLogoutRequest(request)){
 	    	 HANDLER.destroySession(request);
 	    	 HANDLER.logout();
