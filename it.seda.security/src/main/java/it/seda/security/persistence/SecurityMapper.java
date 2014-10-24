@@ -37,7 +37,7 @@ public interface SecurityMapper {
 	void updateAccount(MutableAccount account);
 	void deleteAccount(String username);
 	void loginFailure(String username);	
-	void resetAttempts(MutableAccount mutableAccount);
+	void restoreAttempts(MutableAccount mutableAccount);
 	
 	void insertDefaultGroupMember(String username);
 	void insertAdminGroupMember(String username);
