@@ -101,7 +101,7 @@ public class SecurityService {
 	}
 
 	public void restoreAttempts(MutableAccount mutableAccount) {
-		securityMapper.resetAttempts(mutableAccount);
+		securityMapper.restoreAttempts(mutableAccount);
 	}
 
 	public void insertAccount(MutableAccount mutable) {
