@@ -104,7 +104,7 @@ public class SecurityService {
 		securityMapper.restoreAttempts(mutableAccount);
 	}
 
-	public void insertAccount(MutableAccount mutable) {
+	public void insertAccount(MutableAccount mutable,Customer customer) {
 		if (securityMapper.getAccountByUsername(mutable.getUsername()) != null) {
 			throw new DuplicateAccountException(mutable.getUsername());
 		}
@@ -127,12 +127,12 @@ public class SecurityService {
 				mutable.getUsername(), salt));
 
 		// CUSTOMER SEDA SECUSTTB
-		Customer customer = new Customer(UUID.randomUUID().toString(), "SEDA",
-				"SEDA DEFAULT CUSTOMER", "N", "CAS_SECURITY", new Date(),
-				"CAS_SECURITY", new Date());
+//		Customer customer = new Customer(UUID.randomUUID().toString(), "SEDA",
+//				"SEDA DEFAULT CUSTOMER", "N", "CAS_SECURITY", new Date(),
+//				"CAS_SECURITY", new Date());
 
 		// DEFINIZIONE GRUPPO AMMINISTRATORI SEGRUPTB
-		Group group = new Group(UUID.randomUUID().toString(), "GRUPADMIN",
+		Group group = new Group(UUID.randomUUID().toString(), "START".concat(customer.getCodiceCliente()),
 				"GRUPPO DEGLI AMMINISTRATORI", "CAS_SECURITY", new Date(),
 				"CAS_SECURITY", new Date(), customer.getChiavePrimariaCliente());
 
@@ -163,7 +163,7 @@ public class SecurityService {
 			//SEUSERTB
 			securityMapper.insertAccount(mutable);
 			// DEFAULT CUSTUMER_INIZIO SECUSTTB
-			managerMapper.insertCustomer(customer);
+			//managerMapper.insertCustomer(customer);
 			// DEFAULT CUSTUMER_FINE SEUTECTB
 			managerMapper.insertCustomerUser(cu);
 
@@ -180,8 +180,7 @@ public class SecurityService {
 			// ///////////////////////////////
 			// APPLICATION SEAPLLTB
 			Application application = new Application(UUID.randomUUID()
-					.toString(), "SPRIGPROJECT",
-					"Applicazione it.seda.example.springProject",
+					.toString(), "SPRIGPROJECT","Applicazione it.seda.example.springProject","NSE",
 					"CAS_SECURITY", new Date(), "CAS_SECURITY", new Date());
 			managerMapper.insertApplication(application);
 			// DEFINIZIONE LEGAME CUSTOMER APPLICATION
@@ -317,5 +316,7 @@ public class SecurityService {
 	public String getCodiceFiscaleFromUsernameClient(UsernameClient usernameClient){
 		return securityMapper.getCodiceFiscaleFromUsernameClient(usernameClient);
 	}
+	
+	
 
 }

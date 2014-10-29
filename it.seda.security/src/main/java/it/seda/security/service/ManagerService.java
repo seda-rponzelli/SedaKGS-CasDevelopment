@@ -62,6 +62,12 @@ public class ManagerService {
 		 return customerPage;
 	 }
 	 
+	 @Transactional(readOnly=true)
+	 public List<Customer> listCustomer() {
+		 List<Customer> customerList=managerMapper.listCustomer();
+		 return customerList;
+	 }
+	 
 	 public void deleteCustomerUser(CustomerUser customerUser) {
 		 managerMapper.deleteCustomerUser(customerUser);
 	 }
@@ -131,5 +137,9 @@ public class ManagerService {
 	 @Transactional(readOnly=true)
 	 public String getCustomerIdByURI(String uri){
 		 return managerMapper.getCustomerIdByURI(uri);
+	 }
+	 
+	 public List<Application >getAllChildApplications(String applicationId){
+		 return managerMapper.getAllChildApplications(applicationId);
 	 }
 }

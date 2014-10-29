@@ -1,6 +1,7 @@
 package it.seda.security.persistence;
 
 import it.seda.security.domain.Ticket;
+import it.seda.security.domain.UserApplication;
 
 import java.util.List;
 
@@ -16,5 +17,13 @@ public interface TicketMapper {
 
 	List<Ticket> listTicket(Ticket filter, RowBounds rowBounds);
 	int listTicketCount(Ticket filter);
+	
+	Ticket getNotExpiredTicket(UserApplication userApplication);
+	
+	List<Ticket> getAllLastTickets(UserApplication userApplication);
+	
+	
+	List<Ticket> getAllUserApplicationTickets(String ticketId);
+	
 	
 }

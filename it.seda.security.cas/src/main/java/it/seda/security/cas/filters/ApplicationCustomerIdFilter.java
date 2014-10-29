@@ -3,6 +3,8 @@
  */
 package it.seda.security.cas.filters;
 
+import it.seda.security.cas.CASParametersURL;
+
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -19,6 +21,12 @@ import javax.servlet.http.HttpSession;
  *
  */
 public class ApplicationCustomerIdFilter implements Filter{
+	
+//	private String ID_CLIENTE="customerId";
+//	private String ID_APPLICAZIONE="applicationId";
+	
+	private String ID_CLIENTE=CASParametersURL.ID_CLIENTE.getParameterName();
+	private String ID_APPLICAZIONE=CASParametersURL.ID_APPLICAZIONE.getParameterName();
 
     @Override
     public void destroy() {
@@ -32,13 +40,13 @@ public class ApplicationCustomerIdFilter implements Filter{
             HttpServletRequest request = (HttpServletRequest) req;
             HttpSession session=request.getSession();
             
-            String applicationId = request.getParameter("applicationId");
+            String applicationId = request.getParameter(ID_APPLICAZIONE);
             if (applicationId != null) {
-            	session.setAttribute("applicationId", applicationId);
+            	session.setAttribute(ID_APPLICAZIONE, applicationId);
             }
-            String customerId = request.getParameter("customerId");
+            String customerId = request.getParameter(ID_CLIENTE);
             if (customerId != null) {
-            	session.setAttribute("customerId", customerId);
+            	session.setAttribute(ID_CLIENTE, customerId);
             }
             chain.doFilter(req, res);
 

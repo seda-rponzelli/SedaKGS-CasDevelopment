@@ -2,13 +2,17 @@ package it.seda.security.authentication;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
 import it.seda.security.domain.Account;
+import it.seda.security.domain.Customer;
+import it.seda.security.domain.CustomerUser;
 import it.seda.security.domain.MutableAccount;
 import it.seda.security.domain.UsernameClient;
+import it.seda.security.service.ManagerService;
 import it.seda.security.service.SecurityService;
 
 import org.slf4j.Logger;
@@ -38,25 +42,30 @@ public class RefreshContextListener implements ApplicationListener<ContextRefres
 	public final static String CAS_SECURITY="CAS_SECURITY";
 	public final static String EXPIRATION="2099-12-31";
 	public final static String LAST_ATTEMP="2000-01-01";
-	public final static String ADMIN_USER_KEY="c78dfc0f-968c-486e-bb2d-31820bcfba22";
+	//public final static String ADMIN_USER_KEY="c78dfc0f-968c-486e-bb2d-31820bcfba22";
 	
 	
 	@Autowired private SecurityService securityService; 
+	@Autowired private ManagerService managerService;
 	
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		String customerId=null;
 		Account account=null;
-		account = securityService.getAccountByUserName(ADMIN_USER);
+		List<Customer> customerList=managerService.listCustomer();
+		UsernameClient usernameClient=new UsernameClient();
+		if(customerList!=null&&customerList.size()>0){
+		for (Customer customer : customerList) {
+			usernameClient.setUsername(ADMIN_USER.concat(customer.getCodiceCliente()));
+			usernameClient.setCustomerId(customer.getCodiceCliente());
+		    account = securityService.getAccountByCustomerUser(usernameClient);
 		if (account==null) {
-			logger.warn("administrator account not found.... trying to create it..."); //TODO no i18n
-			//final DateTime expiration = new DateTime(2099, 12, 31, 12, 0, 0, 0);
-			//final DateTime credentialsExpiration = new DateTime(2099, 12, 30, 12, 0, 0, 0);
+			logger.warn("administrator account not found for client "+customer.getCodiceCliente()+".... trying to create it. "); //TODO no i18n
 			MutableAccount accountto=new MutableAccount();
 			accountto.init();
 			accountto.setChiavePrimariaDelCliente(UUID.randomUUID().toString());
-			accountto.setChiavePrimariaTabellaUsers(ADMIN_USER_KEY);
-			accountto.setUsername(ADMIN_USER);
+			accountto.setChiavePrimariaTabellaUsers(UUID.randomUUID().toString());
+			accountto.setUsername(ADMIN_USER.concat(customer.getCodiceCliente()));
 			accountto.setChiavePrimariaDellaTabellaGruppi(UUID.randomUUID().toString());
 			accountto.setFirstName(ADMIN_FIRST_NAME);
 			accountto.setLastName(ADMIN_LAST_NAME);			
@@ -73,12 +82,16 @@ public class RefreshContextListener implements ApplicationListener<ContextRefres
 				logger.error("problem while insert administrator credential expiration...");
 				e.printStackTrace();
 			}
-			securityService.insertAccount(accountto);
+			securityService.insertAccount(accountto,customer);
 			logger.warn("administrator account created..."); //TODO no i18n			
 		} else {
 			logger.warn("administrator account found"); //TODO no i18n
 		}
 		
+		}
+		
+		
+		}//abbiamo finito l'inserimento degli utenti mministratori per ogni cliente
 	}
 	
 	

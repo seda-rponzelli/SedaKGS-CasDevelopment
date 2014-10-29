@@ -7,6 +7,7 @@ import it.seda.security.domain.Customer;
 import it.seda.security.domain.CustomerApplication;
 import it.seda.security.domain.CustomerUser;
 import it.seda.security.domain.Group;
+import it.seda.security.domain.Ticket;
 
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Repository;
@@ -24,6 +25,7 @@ public interface ManagerMapper {
 	boolean existsCustomer(String customerId);
 	Customer selectCustomer(String customerId);
 	List<Customer> listCustomer(RowBounds rowBounds);
+	List<Customer> listCustomer();
 	int listCustomerCount();
 	
 	/* **** Gestione clienti/utenti **** */
@@ -54,4 +56,8 @@ public interface ManagerMapper {
 	String getCustomerIdByURI(String uri);
 	
 	
+	String getURLbackByTicket(Ticket ticket);
+	
+	
+	List<Application> getAllChildApplications(String applicationId);
 }

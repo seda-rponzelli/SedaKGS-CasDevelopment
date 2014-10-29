@@ -37,6 +37,7 @@
                 access="permitAll"/>
         <intercept-url pattern="/logout"
                 access="permitAll"/>
+       
                 <!-- 
         <intercept-url pattern="/errors/**"
                 access="permitAll"/>

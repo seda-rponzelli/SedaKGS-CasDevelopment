@@ -1,5 +1,6 @@
 package it.seda.security.authentication;
 
+import it.seda.security.cas.CASParametersURL;
 import it.seda.security.domain.Account;
 import it.seda.security.domain.UsernameClient;
 import it.seda.security.service.SecurityService;
@@ -28,7 +29,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  */
 @Component("authenticationFailureListener")
 public class AuthenticationFailureListener implements ApplicationListener<AuthenticationFailureBadCredentialsEvent> {
-
+    
+	//private String ID_CLIENTE="customerId";
+	
+	private String ID_CLIENTE=CASParametersURL.ID_CLIENTE.getParameterName();
+	
 	public static final long BFD_THRESHOLD=5000;
 	
 	private Logger logger = LoggerFactory.getLogger(AuthenticationFailureListener.class);
@@ -41,7 +46,7 @@ public class AuthenticationFailureListener implements ApplicationListener<Authen
 
 		String username = event.getAuthentication().getName();
 		
-		String customerId=(String) resolveRequest().getSession().getAttribute("customerId");
+		String customerId=(String) resolveRequest().getSession().getAttribute(ID_CLIENTE);
 		UsernameClient usernameClient=new UsernameClient(username,customerId);
 		
 		

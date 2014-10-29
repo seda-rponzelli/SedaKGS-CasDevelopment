@@ -1,13 +1,5 @@
 package it.seda.security.sign.out;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import it.seda.security.authentication.UserDetailsAdapter;
-import it.seda.security.domain.UsernameClient;
-import it.seda.security.filter.SedaSingleSignOutFilter;
+import it.seda.security.cas.CASParametersURL;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -15,23 +7,26 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.Assert;
 
 
 
 public class SedaSingleSignOutHandler {
 	
+
+	
+	private String ID_TICKET=CASParametersURL.ID_TICKET.getParameterName();
+	
 	private final Logger logger = LoggerFactory.getLogger(SedaSingleSignOutHandler.class);
 	final static String WEB_APP_LOGOUT_URL="j_spring_security_logout";
 	final static String CAS_LOGOUT_URL="j_spring_security_cas_logout";
-    private HashMap sessionMappingStorage = new HashMap();
-   // private boolean tockenFlag=true;
+	final static String CAS_LOGOUT_TICKET="j_seda_cas_saved_ticket";
+
+    /** Mapping of token IDs and session IDs to HTTP sessions */
+    private SessionMappingStorage sessionMappingStorage = new HashMapBackedSessionMappingStorage();
+
 	
-	
-	//il cas ha inviato in post
 	public boolean isApplicationLogoutRequst(HttpServletRequest request){
 		return  "GET".equals(request.getMethod())
                 && !isMultipartRequest(request)&&isWebAppLogoutRequest(request);
@@ -48,20 +43,22 @@ public class SedaSingleSignOutHandler {
         return request.getContentType() != null && request.getContentType().toLowerCase().startsWith("multipart");
     }
 	
-	
+	/** performs logout*/
 	public void logout() {
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(null);
         SecurityContextHolder.clearContext();
     }
 	
+	
+	/** check if this is a CAS logout request*/
 	public boolean isLogoutCASRequest(HttpServletRequest request){
 		String uri = request.getRequestURI();
 		return uri.endsWith(CAS_LOGOUT_URL);
 		
 	}
 	
-	
+	 /** check if this is a web app logout request*/
 	public boolean isWebAppLogoutRequest(HttpServletRequest request){
 		String uri = request.getRequestURI();
 		return uri.endsWith(WEB_APP_LOGOUT_URL);
@@ -69,7 +66,7 @@ public class SedaSingleSignOutHandler {
 	}
 	
 	
-	
+	 /** Records the current ticket-session and invalidates the old session if is present within the same ticket*/
 	@SuppressWarnings("unchecked")
 	public void recordSession(final HttpServletRequest request) {
         final HttpSession session = request.getSession(false);
@@ -77,12 +74,7 @@ public class SedaSingleSignOutHandler {
             logger.debug("No session currently exists (and none created).  Cannot record session information for single sign out.");
             return;
         }
-//        Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
-//        UserDetailsAdapter userDetailsAdapter=(UserDetailsAdapter) authentication.getPrincipal();
-//        String username=userDetailsAdapter.getUsername();
-//        String customerId=userDetailsAdapter.getCustomerId();
-        String ticket=(String) session.getAttribute("ticket");
-        //UsernameClient usernameClient=new UsernameClient(username,customerId);
+        String ticket=(String) session.getAttribute(ID_TICKET);
         if(ticket==null){
         	 logger.debug("No customer ticket available.");
              return;
@@ -90,41 +82,26 @@ public class SedaSingleSignOutHandler {
         logger.debug("Recording session for ticket {} " , ticket);
 
         try {
-        	removeSessionFromMapById(session.getId());
-            //this.sessionMappingStorage.remove(session.getId());
+        	HttpSession oldSession = (HttpSession) sessionMappingStorage.removeSessionByMappingId(ticket);
+        	oldSession.invalidate();
+        	this.sessionMappingStorage.removeBySessionById(session.getId());
         } catch (final Exception e) {
             // ignore if the session is already marked as invalid.  Nothing we can do!
         }
-        sessionMappingStorage.put(ticket, session);
+       
+        sessionMappingStorage.addSessionById(ticket, session);
     }
 	
-	@SuppressWarnings("unchecked")
-	public void removeSessionFromMapById(String sessionId){
-		@SuppressWarnings("rawtypes")
-		Iterator hashMapIterator = sessionMappingStorage.entrySet().iterator();
-		while (hashMapIterator.hasNext()) {
-			@SuppressWarnings("rawtypes")
-			Map.Entry pairs = (Map.Entry)hashMapIterator.next();
-			if(((HttpSession)pairs.getValue()).getId().equals(sessionId)){
-				sessionMappingStorage.remove(pairs.getKey());
-			}
-			
-		}
-		sessionMappingStorage.values().removeAll(Collections.singleton(sessionId));
-	}
 	
 	
-	//We delete al records containing the username customerId stored in the posted request from the CAS
+	 /** Invalidate the current session*/
 	public void destroySession(final HttpServletRequest request) {
-		String ticket=request.getParameter("ticket");
-		//String customerId=request.getParameter("customerId");
-		//UsernameClient usernameCustomer=new UsernameClient(username,customerId);
-		HttpSession session = (HttpSession) sessionMappingStorage.get(ticket);
+		String ticket=request.getParameter(ID_TICKET);
+		HttpSession session = (HttpSession) sessionMappingStorage.removeSessionByMappingId(ticket);
 		if (session != null) {
             String sessionID = session.getId();
             try {
             	logger.debug("Invalidating session [{}] ", sessionID);
-            	removeSessionFromMapById(session.getId());
                 session.invalidate();
             } catch (final IllegalStateException e) {
                 logger.debug("Error invalidating session.", e);
@@ -132,29 +109,28 @@ public class SedaSingleSignOutHandler {
             try {
 				request.logout();
 			} catch (ServletException e) {
-				// TODO Auto-generated catch block
 				  logger.debug("request logout error.", e);
 			}
            
         }
 	}
 	
-	
+	 /** Check if this is a token request from CAS web service */
 	public boolean isTokenRequest(HttpServletRequest request){
 		final HttpSession session = request.getSession(false);
-		if(session.getAttribute("ticket")!=null){
+		if(session.getAttribute(ID_TICKET)!=null){
+			 /** Store ticket in session */
+			session.setAttribute(CAS_LOGOUT_TICKET,session.getAttribute(ID_TICKET));
 			return true;
 		}
 		return false;
 	}
 
-	
-	public String getCASWebServiceURL(String url){
-		Authentication authentication=SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsAdapter userDetailsAdapter=(UserDetailsAdapter) authentication.getPrincipal();
-        String username=userDetailsAdapter.getUsername();
-        String customerId=userDetailsAdapter.getCustomerId();
-        url=url.concat("/").concat(username).concat("/").concat(customerId);
+	 /** Get CAS ticket from session and then concats it to the CAS web service's url */
+	public String getCASWebServiceURL(HttpServletRequest request,String url){
+		HttpSession session = request.getSession(false);
+		String ticket=(String) session.getAttribute(CAS_LOGOUT_TICKET);
+        url=url.concat("/").concat(ticket);
         return url;
 	}
 }

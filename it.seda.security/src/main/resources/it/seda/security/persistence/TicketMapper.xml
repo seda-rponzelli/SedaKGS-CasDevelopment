@@ -140,4 +140,85 @@ SELECT COUNT(*)
 	     	<if test="chiavePrimariaDelleApplicazioni != null"> SEAPPL_CKEYAPPL=#{chiavePrimariaDelleApplicazioni}</if>
 	     </where>
 </select>
+
+
+
+<select id="getNotExpiredTicket" resultMap="ticket" parameterType="UserApplication">
+     SELECT  SETICKTB.SETICK_CKEYTICK
+	       , SETICKTB.SETICK_CUSERNAME
+	       , SETICKTB.SETICK_CCODFISC
+	       , SETICKTB.SETICK_GDATCREA	         
+	       , SETICKTB.SETICK_GDATSCAD	
+           , SETICKTB.SETICK_COPERINS	
+           , SETICKTB.SETICK_GDATAINS	
+           , SETICKTB.SETICK_COPEUVAR	
+           , SETICKTB.SETICK_GDATUVAR
+           , SETICKTB.SEAPPL_CKEYAPPL
+	     FROM SETICKTB
+WHERE SETICK_CUSERNAME = #{username}
+   AND SEAPPL_CKEYAPPL  = #{applicationId}
+   AND SETICK_GDATSCAD  > CURRENT_TIMESTAMP
+   AND SETICK_CCODFISC  = (SELECT SEUSER_CCODFISC
+                             FROM SEUTECTB,
+                                  SECUSTTB
+                            WHERE SECUST_CCODCUS = #{customerId}
+                              AND SEUTECTB.SEUSER_CUSERNAME = SETICK_CUSERNAME
+                              AND SEUTECTB.SECUST_CKEYCUST = SECUSTTB.SECUST_CKEYCUST)
+	    
+</select>
+
+<select id="getAllLastTickets" resultMap="ticket" parameterType="UserApplication">
+SELECT  A1.SETICK_CKEYTICK
+	       , A1.SETICK_CUSERNAME
+	       , A1.SETICK_CCODFISC
+	       , A1.SETICK_GDATCREA	         
+	       , A1.SETICK_GDATSCAD	
+         , A1.SETICK_COPERINS	
+         , A1.SETICK_GDATAINS	
+         , A1.SETICK_COPEUVAR	
+         , A1.SETICK_GDATUVAR
+         , A1.SEAPPL_CKEYAPPL
+	     FROM SETICKTB A1
+   WHERE  A1.SETICK_CUSERNAME =  #{username}
+   AND  A1.SETICK_GDATSCAD  = (SELECT MAX(B.SETICK_GDATSCAD) FROM SETICKTB B 
+                                WHERE B.SETICK_CUSERNAME=A1.SETICK_CUSERNAME
+                                AND B.SETICK_CCODFISC=A1.SETICK_CCODFISC
+                                AND B.SEAPPL_CKEYAPPL=A1.SEAPPL_CKEYAPPL)
+   AND  A1.SETICK_CCODFISC  = (SELECT SEUSER_CCODFISC
+                             FROM SEUTECTB,
+                                  SECUSTTB
+                            WHERE SECUST_CCODCUS = #{customerId}
+                              AND SEUTECTB.SEUSER_CUSERNAME = SETICK_CUSERNAME
+                              AND SEUTECTB.SECUST_CKEYCUST = SECUSTTB.SECUST_CKEYCUST)  
+</select>
+
+
+
+
+<select id="getAllUserApplicationTickets" resultMap="ticket" parameterType="string">
+SELECT A1.SETICK_CKEYTICK
+	       , A1.SETICK_CUSERNAME
+	       , A1.SETICK_CCODFISC
+	       , A1.SETICK_GDATCREA	         
+	       , A1.SETICK_GDATSCAD	
+         , A1.SETICK_COPERINS	
+         , A1.SETICK_GDATAINS	
+         , A1.SETICK_COPEUVAR	
+         , A1.SETICK_GDATUVAR
+         , A1.SEAPPL_CKEYAPPL
+FROM  SEAPPCTB
+INNER JOIN SETICKTB A1
+ON  A1.SETICK_CKEYTICK=#{ticketId}
+AND  A1.SETICK_GDATSCAD=(SELECT MAX(A2.SETICK_GDATSCAD) 
+                              FROM SETICKTB A2
+                              WHERE A2.SETICK_CKEYTICK=A1.SETICK_CKEYTICK )
+INNER JOIN SEUTECTB
+ON SEUTECTB.SEUSER_CUSERNAME=A1.SETICK_CUSERNAME
+AND SEUTECTB.SEUSER_CCODFISC=A1.SETICK_CCODFISC
+
+</select>
+
+
+
+
 </mapper>

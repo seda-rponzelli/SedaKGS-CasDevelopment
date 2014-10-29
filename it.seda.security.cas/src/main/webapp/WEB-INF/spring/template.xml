@@ -11,6 +11,10 @@
 		 <parameter key="content" value="/views/auth/login.jsp"/>
 	</screen>
 	
+	<screen name="logout">
+		 <parameter key="content" value="/views/auth/logout.jsp"/>
+	</screen>
+	
 	<screen name="home" extends="base">
 		 <parameter key="content" value="/views/home.jsp"/>
 	</screen>	

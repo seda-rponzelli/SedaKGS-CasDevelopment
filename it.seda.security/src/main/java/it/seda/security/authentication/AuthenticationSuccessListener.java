@@ -2,6 +2,7 @@ package it.seda.security.authentication;
 
 import javax.servlet.http.HttpServletRequest;
 
+import it.seda.security.cas.CASParametersURL;
 import it.seda.security.domain.Account;
 import it.seda.security.domain.MutableAccount;
 import it.seda.security.domain.UsernameClient;
@@ -27,14 +28,15 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 public class AuthenticationSuccessListener implements ApplicationListener<AuthenticationSuccessEvent>{
 
 	@Autowired private SecurityService securityService;
-
+	//private String ID_CLIENTE="customerId";
+	private String ID_CLIENTE=CASParametersURL.ID_CLIENTE.getParameterName();
 	public void onApplicationEvent(AuthenticationSuccessEvent event) {
 
 		String username = event.getAuthentication().getName();
 		
 		
 		
-		String customerId=(String) resolveRequest().getSession().getAttribute("customerId");
+		String customerId=(String) resolveRequest().getSession().getAttribute(ID_CLIENTE);
 		UsernameClient usernameClient=new UsernameClient(username,customerId);
 		Account account = securityService.getAccountByCustomerUser(usernameClient);
 

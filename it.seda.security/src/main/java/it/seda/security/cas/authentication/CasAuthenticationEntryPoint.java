@@ -3,18 +3,22 @@ package it.seda.security.cas.authentication;
 
 
 import it.seda.security.authentication.UserDetailsAdapter;
+import it.seda.security.cas.CASParametersURL;
 import it.seda.security.cas.CommonUtils;
 import it.seda.security.cas.ServiceProperties;
 import it.seda.security.domain.Account;
 import it.seda.security.domain.Application;
 import it.seda.security.service.ManagerService;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -54,7 +58,11 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
 	@Autowired protected ManagerService managerService;
 	@Autowired protected UserDetailsService userDetailsService;
 
-	private String ID_CLIENTE="customerId";
+	private String ID_CLIENTE=CASParametersURL.ID_CLIENTE.getParameterName();
+	private String ID_APPLICAZIONE=CASParametersURL.ID_APPLICAZIONE.getParameterName();
+	private String ID_TICKET=CASParametersURL.ID_TICKET.getParameterName();
+	
+	
 	private ServiceProperties serviceProperties;
 	
 	private static final Logger logger = LoggerFactory.getLogger(CasAuthenticationEntryPoint.class);
@@ -73,20 +81,14 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
 
     public final void commence(final HttpServletRequest servletRequest, final HttpServletResponse response,
             final AuthenticationException authenticationException) throws IOException, ServletException {
-
     	urlEncodedService = createServiceUrl(servletRequest, response);
         redirectUrl = createRedirectUrl(urlEncodedService);
         if(redirectUrl==null){
         	logger.debug("Cas url is null!. Check if you have defined it in serviceProperties.");
         }
         applicationId = getApplicationId(serviceProperties);
-        
         preCommence(servletRequest, response);
-        
-        //TODO Verificare se c'un ticket nella request ed in tal caso chiamare il web services per il salvataggio dell userbean
         submitTicket(servletRequest,response);
-//        saveApplicationId(servletRequest);
-//        response.sendRedirect(concatApplicationIdToUrl(applicationId));
     }
 
 
@@ -161,8 +163,8 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
     
     /* Metodo per concatenare l'ìId della applicazione alla Url di redirect */ 
     protected String concatApplicationIdToUrl (String applicationId,String customerId) {
-    	logger.debug("Url di redirect: " +redirectUrl + "&applicationId=" +applicationId+ "&customerId=" +customerId);
-		return redirectUrl = redirectUrl + "&applicationId=" +applicationId+ "&customerId=" +customerId;
+    	logger.debug("Url di redirect: " +redirectUrl + "&"+ID_APPLICAZIONE+"=" +applicationId+ "&"+ID_CLIENTE+"=" +customerId);
+		return redirectUrl = redirectUrl + "&"+ID_APPLICAZIONE+"=" +applicationId+ "&"+ID_CLIENTE+"=" +customerId;
 	}
 
 
@@ -176,21 +178,19 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
     
     protected void submitTicket(HttpServletRequest servletRequest,HttpServletResponse response) throws IOException {
 		HttpSession session=servletRequest.getSession();
-    	String ticket = (String) session.getAttribute("ticket");
-    	
+    	String ticket = (String) session.getAttribute(ID_TICKET);	
     	if (ticket== null)  {
-    		
     		String applicationCustomerURl=servletRequest.getRequestURL().toString();
-    		//customerId=managerService.getCustomerIdByURI(applicationCustomerURl);
     		customerId=getCustomerIdFromRequest(servletRequest);
-    	    logger.debug("applicationId = "+applicationId +"  customerId= "+customerId +". Unknown login request.");
+    	    logger.debug(ID_APPLICAZIONE +"="+applicationId + ID_CLIENTE+"="+customerId +". Unknown login request.");
     		response.sendRedirect(concatApplicationIdToUrl(applicationId,customerId));
     		return;
     	}
     	
     	
     	logger.debug("Calling cas web service usind ticket: "+ticket);
-    	UserDetailsAdapter userDetailsAdapter = getUserBean(ticket);  	
+    	UserDetailsAdapter userDetailsAdapter = getUserBean(ticket); 
+    	session.removeAttribute(ID_TICKET);
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             // in here, get your principal, and populate the auth object with 
             // the right authorities
@@ -198,9 +198,9 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
         	UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken=new UsernamePasswordAuthenticationToken(userDetailsAdapter, userDetailsAdapter.getPassword(),userDetailsAdapter.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
        }
-       //response.sendRedirect("it.seda.example.springProject/");
-       response.sendRedirect("");
         
+       response.sendRedirect("");
+     
 	}
 
 	private UserDetailsAdapter getUserBean(String ticket) {	
@@ -221,7 +221,10 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
 		return userDetailsAdapter;
 	}
 	
-	
+	/*
+	 * Il metodo main può essere utile in caso si volesse testare le funzionalità del cas ws per il recupero 
+	 * dell'account utente.
+	 * 
 	public static void main(String args[]){
 		RestTemplate restTemplate = new RestTemplate();
 		ObjectMapper mapper = new ObjectMapper();
@@ -236,10 +239,6 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
 //    	restTemplate.getForObject(webServiceURL, Account.class);
 //    	Account model=restTemplate.getForObject(webServiceURL, Account.class);
 //    	System.out.println("Name"+model.getExpiration());
-    	
-    	
-    	
-    	
 		com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
 		objectMapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
 		objectMapper.configure(MapperFeature.USE_ANNOTATIONS, true);
@@ -254,7 +253,7 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
     	Account model=restTemplate.getForObject(webServiceURL, Account.class);
     	System.out.println("Name"+model.getExpiration());
 	}
-	
+	*/
 	
 	private String getCustomerIdFromRequest(HttpServletRequest request){
 		 

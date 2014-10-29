@@ -3,6 +3,7 @@ package it.seda.security.domain;
 public class UserApplication {
 	
 	private String username;
+	private String customerId;
 	private String applicationId;
 	
 	
@@ -11,9 +12,10 @@ public class UserApplication {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public UserApplication(String username, String applicationId) {
+	public UserApplication(String username,String customerId,String applicationId) {
 		super();
 		this.username = username;
+		this.customerId = customerId;
 		this.applicationId = applicationId;
 	}
 	public String getUsername() {
@@ -21,6 +23,12 @@ public class UserApplication {
 	}
 	public void setUsername(String username) {
 		this.username = username;
+	}
+	public String getCustomerId() {
+		return customerId;
+	}
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
 	}
 	public String getApplicationId() {
 		return applicationId;
@@ -30,12 +38,8 @@ public class UserApplication {
 	}
 	@Override
 	public String toString() {
-		return "UserApplication [username=" + username + ", applicationId="
-				+ applicationId + "]";
+		return "UserApplication [username=" + username + ", customerId="
+				+ customerId + ", applicationId=" + applicationId + "]";
 	}
 	
-	
-	
-	
-
 }

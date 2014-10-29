@@ -192,7 +192,7 @@
 	         , SECUSTTB.SECUST_GDATUVAR
 	     FROM SECUSTTB
          WHERE SECUST_CKEYCUST &lt;&gt; 'SEDA'	      
-	     ORDER BY SECUST_CKEYCUST	       		
+	     ORDER BY SECUST_GDATAINS DESC	       		
 	</select>
 	<!-- ORACLE DB FINE -->
 	
@@ -281,6 +281,7 @@
 		INSERT INTO SEAPPLTB (SEAPPL_CKEYAPPL, 
 		                      SEAPPL_CCODAPP,
 		                      SEAPPL_CDESCAPP,
+		                      SEAPPL_CCODMAST,
 		                      SEAPPL_COPERINS,
 		                      SEAPPL_GDATAINS,
 		                      SEAPPL_COPEUVAR,
@@ -288,6 +289,7 @@
 		VALUES (#{chiavePrimariaDelleApplicazioni}, 
 		        #{codiceApplicazione},
 		        #{descrizioneApplicazione},
+		        #{chiaveApplicazioneMaster},
 		        #{operatoreInserimento},
 		        CURRENT_TIMESTAMP,
 		        #{operatoreUltimaVariazione},
@@ -529,4 +531,43 @@
       FROM SEAPPCTB
       WHERE SEAPPC_CURLAPPLCLIENTE=#{customerURL} 
 	</select>
+	
+	
+	<select id="getURLbackByTicket" parameterType="Ticket" resultType="string">
+	  SELECT SEAPPCTB.SEAPPC_CURLAPPLCLIENTE
+        FROM  SEAPPCTB
+        INNER JOIN SETICKTB
+        ON SETICKTB.SETICK_CUSERNAME=#{username}
+        AND SETICKTB.SETICK_CCODFISC=#{codiceFiscaleDelDelegatoPersonaFisica}
+        AND SETICKTB.SETICK_GDATSCAD=(SELECT MAX(SETICK_GDATSCAD) 
+                                     FROM SETICKTB A2
+                              WHERE A2.SETICK_CUSERNAME=#{username}
+                              AND  A2.SETICK_CCODFISC=#{codiceFiscaleDelDelegatoPersonaFisica}
+                              AND  A2.SEAPPL_CKEYAPPL=#{chiavePrimariaDelleApplicazioni}
+                                     )
+        INNER JOIN SEUTECTB
+        ON SEUTECTB.SEUSER_CUSERNAME=SETICKTB.SETICK_CUSERNAME
+        AND SEUTECTB.SEUSER_CCODFISC=SETICKTB.SETICK_CCODFISC
+        WHERE SEAPPCTB.SEAPPL_CKEYAPPL=#{chiavePrimariaDelleApplicazioni}
+	</select>
+	
+	
+<select id="getAllChildApplications" resultMap="application" parameterType="string">
+SELECT A1.SEAPPL_CKEYAPPL,
+       A1.SEAPPL_CCODAPP,
+       A1.SEAPPL_CDESCAPP,
+       A1.SEAPPL_CCODMAST,
+       A1.SEAPPL_COPERINS,
+       A1.SEAPPL_GDATAINS,
+       A1.SEAPPL_COPEUVAR,
+       A1.SEAPPL_GDATUVAR
+FROM SEAPPLTB A1
+INNER JOIN SEAPPLTB A2
+ON A1.SEAPPL_CCODMAST=A2.SEAPPL_CCODAPP
+AND A2.SEAPPL_CKEYAPPL=#{applicationId}
+</select>
+
+
+
+	
 </mapper>

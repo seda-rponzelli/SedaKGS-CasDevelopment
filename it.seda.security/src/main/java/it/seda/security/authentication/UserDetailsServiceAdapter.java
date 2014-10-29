@@ -5,6 +5,7 @@ package it.seda.security.authentication;
 
 import javax.servlet.http.HttpServletRequest;
 
+import it.seda.security.cas.CASParametersURL;
 import it.seda.security.domain.Account;
 import it.seda.security.domain.UsernameClient;
 import it.seda.security.service.SecurityService;
@@ -24,7 +25,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  */
 @Service(value="userDetailsService")
 public class UserDetailsServiceAdapter implements UserDetailsService {
-	
+	//private String ID_CLIENTE="customerId";
+	private String ID_CLIENTE=CASParametersURL.ID_CLIENTE.getParameterName();
 	@Autowired SecurityService securityService;
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -33,18 +35,9 @@ public class UserDetailsServiceAdapter implements UserDetailsService {
 //		HttpServletRequest request=((ServletRequestAttributes)attributes).getRequest();
 //		String IdCliente=getIdClienteFromUrl(request);
 		
-		//TODO creare account usando anche IdCliente
-		
-		
-		String customerId=(String) resolveRequest().getSession().getAttribute("customerId");
+		String customerId=(String) resolveRequest().getSession().getAttribute(ID_CLIENTE);
 		UsernameClient usernameClient=new UsernameClient(username,customerId);
-		
-		
 		Account account = securityService.getAccountByCustomerUser(usernameClient);
-		
-		//String customerId=(String) resolveRequest().getSession().getAttribute("customerId");
-		//Account account = securityService.getAccountByUserName(username);
-		
 		if (account==null) {
 			//TODO NO I18N
 			throw new UsernameNotFoundException("No such user: " + username);
@@ -52,10 +45,8 @@ public class UserDetailsServiceAdapter implements UserDetailsService {
 			//TODO NO I18N			
 			throw new UsernameNotFoundException("User " + username + " has no authorities");
 		}
-
 		UserDetailsAdapter user = new UserDetailsAdapter(account);	
 		user.setPassword(securityService.findPasswordByCustumerUser(usernameClient));
-		
 		return user;
 	}
 	
