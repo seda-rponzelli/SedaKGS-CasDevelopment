@@ -576,15 +576,6 @@ WHERE SEUSERTB.SEUSER_CUSERNAME =  #{username}
 	</update>
 <!-- ORACLE DB FINE -->
 
-<!-- ORACLE DB INIZIO -->
-	<update id="resetAttempts" parameterType="string">
-	    UPDATE SEUSERTB
-	      SET SEUSERTB.SEUSER_NNUMTENTIVI=SEUSERTB.SEUSER_NNUMTENTIVI+1
-	        , SEUSER_GULTIMOTENT=CURRENT_TIMESTAMP
-       WHERE SEUSERTB.SEUSER_CUSERNAME=#{username}
-	</update>	
-<!-- ORACLE DB FINE -->
-
 <!--  
 	<insert id="insertDefaultGroupMember" parameterType="string">
 		INSERT INTO GROUP_MEMBERS (group_id, username)
@@ -752,7 +743,6 @@ WHERE SEUSERTB.SEUSER_CUSERNAME =  #{username}
 	    INSERT INTO SESFUNTB (SESFUN_CKEYSFUN, SESFUN_CCODSFU,SESFUN_CDESCSFU,SESFUN_COPERINS,SESFUN_GDATAINS,SESFUN_COPEUVAR,SESFUN_GDATUVAR)
 		VALUES(#{chiavePrimariaDelleSottoFunzioni},#{codiceSottoFunzione},#{descrizioneSottoFunzione},#{operatoreInserimento},CURRENT_TIMESTAMP,#{operatoreUltimaVariazione},CURRENT_TIMESTAMP) 
 </insert> 
-
 
 <!-- recupero account per id applicazione utente e cliente -->
 <select id="getAccountByCustomerUser" parameterType="UsernameClient" resultMap="accountComplete">
