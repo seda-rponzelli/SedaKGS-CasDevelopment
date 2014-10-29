@@ -50,6 +50,7 @@ public class RefreshContextListener implements ApplicationListener<ContextRefres
 	
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
+		/*
 		String customerId=null;
 		Account account=null;
 		List<Customer> customerList=managerService.listCustomer();
@@ -92,6 +93,7 @@ public class RefreshContextListener implements ApplicationListener<ContextRefres
 		
 		
 		}//abbiamo finito l'inserimento degli utenti mministratori per ogni cliente
+		*/
 	}
 	
 	
