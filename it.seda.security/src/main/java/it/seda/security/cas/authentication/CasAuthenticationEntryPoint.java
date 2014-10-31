@@ -55,8 +55,8 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
 	
 	
 	
-	@Autowired protected ManagerService managerService;
-	@Autowired protected UserDetailsService userDetailsService;
+	//@Autowired protected ManagerService managerService;
+	//@Autowired protected UserDetailsService userDetailsService;
 
 	private String ID_CLIENTE=CASParametersURL.ID_CLIENTE.getParameterName();
 	private String ID_APPLICAZIONE=CASParametersURL.ID_APPLICAZIONE.getParameterName();
@@ -147,6 +147,8 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
     /* Metodo per ottenere l'Id della applicazione */
     protected String getApplicationId (ServiceProperties serviceProperties) {
     	String applicationName  = serviceProperties.getApplicationName();
+    	return applicationName;
+    	/*
     	Application application = null;
     	try {
     		application = managerService.selectApplicationIdByName(applicationName);	
@@ -154,11 +156,11 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
 			logger.error("Applicazione: " +applicationName +" non censita all'interno della tabella Applications");
 			logger.error(e.getMessage());
 		}
-    	if (application != null) {
-    		//return application.getId();	
+    	if (application != null) {	
     		return application.getChiavePrimariaDelleApplicazioni();	
     	} 
     	return "";
+    	*/
     }
     
     /* Metodo per concatenare l'ÏId della applicazione alla Url di redirect */ 
