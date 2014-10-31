@@ -104,7 +104,11 @@
         <property name="exceptionMappings">
             <map>
                 <entry key="NoSuchRequestHandlingMethodException" value="error404"/>
-                <entry key="java.lang.Throwable" value="error"/>         
+                 <entry key="it.seda.security.cas.exceptions.ApplicationNotFoundException" value="error404"/> 
+                <entry key="it.seda.security.cas.exceptions.UserNotGrantedException" value="error404"/>
+                <entry key="it.seda.security.cas.exceptions.GenericTicketException" value="error404"/>  
+                <entry key="java.lang.Throwable" value="error"/>  
+                               
             </map>
         </property>
         <!-- See note below on how this interacts with Spring Boot -->

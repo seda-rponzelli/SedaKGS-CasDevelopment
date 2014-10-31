@@ -38,16 +38,17 @@
         <intercept-url pattern="/logout"
                 access="permitAll"/>
        
-                <!-- 
+               
         <intercept-url pattern="/errors/**"
                 access="permitAll"/>
- 				-->
+ 				
 		<!-- 
         <intercept-url pattern="/**"
                 access="hasAnyRole('ROLE_ADMIN, ROLSE_USER')"/>
  		-->
+ 		<!--  
  		<intercept-url pattern="/**"
-                access="isAuthenticated()"/> <!-- if the user is not anonymous -->
+                access="isAuthenticated()"/>--> <!-- if the user is not anonymous -->
        	
 		<form-login login-processing-url="/j_signon" 
 					login-page="/login" 
@@ -85,5 +86,17 @@
 			</password-encoder>
 		</authentication-provider>
 	</authentication-manager>
+	
+	
+	<!-- 
+	<bean id="exceptionMapper" class="org.springframework.security.web.authentication.ExceptionMappingAuthenticationFailureHandler" >
+    <property name="exceptionMappings">
+        <props>
+            <prop key=".CredentialsExpiredException">/changePassword</prop>
+            <prop key=".BadCredentialsException">/login?failure=true</prop>
+        </props>
+    </property>
+    </bean>
+	 -->
 
 </beans:beans>

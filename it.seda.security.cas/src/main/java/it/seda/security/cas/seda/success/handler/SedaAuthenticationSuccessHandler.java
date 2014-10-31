@@ -2,6 +2,9 @@ package it.seda.security.cas.seda.success.handler;
 
 import it.seda.security.authentication.UserDetailsAdapter;
 import it.seda.security.cas.CASParametersURL;
+import it.seda.security.cas.exceptions.ApplicationNotFoundException;
+import it.seda.security.cas.exceptions.GenericTicketException;
+import it.seda.security.cas.exceptions.UserNotGrantedException;
 import it.seda.security.domain.Application;
 import it.seda.security.domain.CustomerApplication;
 import it.seda.security.domain.CustomerCodeApplication;
@@ -50,20 +53,22 @@ public class SedaAuthenticationSuccessHandler implements AuthenticationSuccessHa
 	public void onAuthenticationSuccess(HttpServletRequest request,
 			HttpServletResponse response, Authentication auth)
 			throws IOException, ServletException {
-		// initialization logic after login
-		// quì sono stato autenticato e possiamo accedere alle informazioni
-		// dell'authentication tra cui i ruoli e lo username
-		// se allo username autenticato corrisponde l'id dell'applicazione
-		// inviamo una redirect all'applicazione che aspetta il token
-		// altrimenti inviamo la request al cas
-		//String username = ((UserDetailsAdapter) auth.getPrincipal()).getFirstName();
-		applicationId=(String) request.getSession().getAttribute(ID_APPLICAZIONE);
+    	
+    	try{
+    	
+    	String applicationCode=(String) request.getSession().getAttribute(ID_APPLICAZIONE);
+    	try{
+    	applicationId = (managerService.selectApplicationIdByName(applicationCode)).getChiavePrimariaDelleApplicazioni();
+    	}catch(Exception e){
+    		logger.debug("Applicazione "+applicationCode +" non censita." );
+    		throw new ApplicationNotFoundException("Applicazione "+applicationCode +" non censita.",e);
+    	//	response.sendRedirect("/views/errors/error?error=true");
+    	}
 		customerId=(String) request.getSession().getAttribute(ID_CLIENTE);
 		CustomerCodeApplication customerCodeApplication = new CustomerCodeApplication(customerId,applicationId);
 		urlBack = setUrlBack(customerCodeApplication);
 		logger.debug("Login completed. ApplicationId= "+applicationId+" .CustomerId= "+customerId+" .UrlBack"+urlBack+"...");
 		String username=((UserDetailsAdapter) auth.getPrincipal()).getUsername();
-		//String password=((UserDetailsAdapter) auth.getPrincipal()).getPassword();
 		if (applicationId != null&& customerId!=null&&urlBack!=null) {
 			boolean userGranted = checkUserApplicationId(username);
 			
@@ -78,12 +83,21 @@ public class SedaAuthenticationSuccessHandler implements AuthenticationSuccessHa
 				response.sendRedirect(urlBack+"?"+ID_TICKET+"="+ticket);
 			}
 			else{
-				response.sendRedirect("/errors?error=");
+				logger.debug("User "+username+" and client "+customerId+" are not associated with application "+applicationId);
+				throw new ApplicationNotFoundException("User "+username +" and client " + customerId+"not granted for application "+applicationId);
+				//response.sendRedirect("/views/errors/error?error=true");
 				
 			}
 		} else {
-			response.sendRedirect("/welcome");
+			logger.debug("ApplicationId,customerId or application back url are null.");
+			throw new ApplicationNotFoundException("ApplicationId,customerId or application back url are null.");
+			//response.sendRedirect("/views/errors/error?error=true");
 		}
+		
+    	}catch(Exception e){
+    		logger.debug("Generic exception while sending ticker for application  "+applicationId +" and customer "+customerId);
+    		throw new GenericTicketException("Generic exception while sending ticker for application  "+applicationId +" and customer "+customerId,e);
+    	}
 	}
     
     /*Controlla se l'utente-cliente è censito controllando se è valorizzato il codiceFiscale*/
@@ -102,17 +116,16 @@ public class SedaAuthenticationSuccessHandler implements AuthenticationSuccessHa
     	return false;
     }
 	
-    /*va presa dal DB*/
+    /*Cerca la url back dell'utente-client applicazione*/
     protected String setUrlBack(CustomerApplication customerApplication){
         String urlBack=securityService.findURLBackByCustumerApplication(customerApplication);
         return  urlBack;	
-		//return "http://localhost:8080/it.seda.example.springProject";	
+		
     }
     
     protected String setUrlBack(CustomerCodeApplication customerCodeApplication){
         String urlBack=securityService.findURLBackByCustumerCodeApplication(customerCodeApplication);
         return  urlBack;	
-		//return "http://localhost:8080/it.seda.example.springProject";	
     }
         
 }

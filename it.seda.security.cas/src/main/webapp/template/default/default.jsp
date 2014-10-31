@@ -37,8 +37,8 @@
 		</div>
 	
 		<div id="navigation">
-			<x:include parameter="navigation" hasRoles="ROLE_USER,ROLE_ADMIN"/>
-		</div>		
+			<x:include parameter="navigation" hasRoles="ROLE_ANONYMOUS"/>
+		</div>
 		
 		<div id="content-container">
 			<x:include parameter="content" />
