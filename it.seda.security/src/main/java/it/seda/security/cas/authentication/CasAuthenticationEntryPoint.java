@@ -201,7 +201,7 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
        }
         
-       response.sendRedirect("");
+       response.sendRedirect(servletRequest.getRequestURL().toString());
      
 	}
 

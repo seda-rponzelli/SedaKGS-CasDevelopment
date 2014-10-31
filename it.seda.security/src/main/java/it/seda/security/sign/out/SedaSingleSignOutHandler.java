@@ -83,7 +83,9 @@ public class SedaSingleSignOutHandler {
 
         try {
         	HttpSession oldSession = (HttpSession) sessionMappingStorage.removeSessionByMappingId(ticket);
+        	if(oldSession.getId()!=session.getId()){
         	oldSession.invalidate();
+        	}
         	this.sessionMappingStorage.removeBySessionById(session.getId());
         } catch (final Exception e) {
             // ignore if the session is already marked as invalid.  Nothing we can do!

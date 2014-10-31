@@ -1,0 +1,12 @@
+<templates>
+	<template name="default" url="/resources/template/default.jsp" default="true"/>
+  
+	<screen name="entrate">
+		<parameter key="headerLeft" value="/resources/template/default/header_banner.jsp" />
+		<parameter key="headerRight" value="/resources/template/default/header_credentials.jsp"/>		
+		<parameter key="menu" value="/resources/template/default/menu.jsp"/>
+		<parameter key="content" value="/resources/template/default/content.jsp"/>
+		<parameter key="footer" value="/resources/template/default/footer.jsp"/>
+	</screen>
+	
+</templates>
