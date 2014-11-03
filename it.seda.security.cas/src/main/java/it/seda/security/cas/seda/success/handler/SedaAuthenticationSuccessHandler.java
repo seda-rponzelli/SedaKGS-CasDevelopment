@@ -5,6 +5,7 @@ import it.seda.security.cas.CASParametersURL;
 import it.seda.security.cas.exceptions.ApplicationNotFoundException;
 import it.seda.security.cas.exceptions.GenericTicketException;
 import it.seda.security.cas.exceptions.UserNotGrantedException;
+import it.seda.security.cas.utils.TokenUtils;
 import it.seda.security.domain.Application;
 import it.seda.security.domain.CustomerApplication;
 import it.seda.security.domain.CustomerCodeApplication;
@@ -21,6 +22,7 @@ import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,8 +38,13 @@ public class SedaAuthenticationSuccessHandler implements AuthenticationSuccessHa
 	private String ID_CLIENTE=CASParametersURL.ID_CLIENTE.getParameterName();
 	private String ID_APPLICAZIONE=CASParametersURL.ID_APPLICAZIONE.getParameterName();
 	private String ID_TICKET=CASParametersURL.ID_TICKET.getParameterName();
-	
-	
+	private String EXCEPTIONS_CONTROLLER_URI="login/exceptions";
+	private String APPLICATION_NOT_FOUND="Applicazione non censita : ";
+	private String APPLICATION_CUSTOMER_PROBLEMS="Si sono verificati problemi nel recupero delle informazioni legate all'applicazione.";
+	private String USER_NOT_GRANTED="Utenza non abilitata al servizio : ";
+	private String GENERIC_ERROR="Errore generico durante la generazione del ticket. ";
+	private String APPLICATION_LIST="j_seda_cas_application_list";
+	private String PARENT_CUSTOMER="j_seda_cas_parent_customer";
 	
 	private static final Logger logger = LoggerFactory.getLogger(SedaAuthenticationSuccessHandler.class);
     protected String applicationId;
@@ -48,33 +55,39 @@ public class SedaAuthenticationSuccessHandler implements AuthenticationSuccessHa
     @Autowired SecurityService securityService;
     @Autowired ManagerService managerService;
     @Autowired LoginUtils loginUtils;
+    @Autowired TokenUtils tokenUtils;
     
     @Override
 	public void onAuthenticationSuccess(HttpServletRequest request,
 			HttpServletResponse response, Authentication auth)
 			throws IOException, ServletException {
     	
-    	try{
+    	
     	
     	String applicationCode=(String) request.getSession().getAttribute(ID_APPLICAZIONE);
     	try{
     	applicationId = (managerService.selectApplicationIdByName(applicationCode)).getChiavePrimariaDelleApplicazioni();
     	}catch(Exception e){
     		logger.debug("Applicazione "+applicationCode +" non censita." );
-    		throw new ApplicationNotFoundException("Applicazione "+applicationCode +" non censita.",e);
-    	//	response.sendRedirect("/views/errors/error?error=true");
+    		String message=APPLICATION_NOT_FOUND.concat("applicationCode: "+applicationCode);
+    	    response.sendRedirect(EXCEPTIONS_CONTROLLER_URI+"/"+ApplicationNotFoundException.class.getName()+"/"+message);
+    	    return;
     	}
+    	try{
 		customerId=(String) request.getSession().getAttribute(ID_CLIENTE);
 		CustomerCodeApplication customerCodeApplication = new CustomerCodeApplication(customerId,applicationId);
-		urlBack = setUrlBack(customerCodeApplication);
+		urlBack = tokenUtils.setUrlBack(customerCodeApplication);
 		logger.debug("Login completed. ApplicationId= "+applicationId+" .CustomerId= "+customerId+" .UrlBack"+urlBack+"...");
 		String username=((UserDetailsAdapter) auth.getPrincipal()).getUsername();
 		if (applicationId != null&& customerId!=null&&urlBack!=null) {
-			boolean userGranted = checkUserApplicationId(username);
+			boolean userGranted = tokenUtils.checkUserApplicationId(username,customerId);
 			
 			List<Application> applicationList=managerService.getAllChildApplications(applicationId);
 			if(applicationList!=null&&applicationList.size()>0){
-				loginUtils.sendLoginRequest(username,customerId,applicationList);
+				HttpSession session=request.getSession();
+				List<Application> oldApplicationList=(List<Application>) session.getAttribute("ApplicationsList");
+				session.setAttribute(APPLICATION_LIST,applicationList);
+				session.setAttribute(PARENT_CUSTOMER,customerId);
 			}
 			
 			Ticket generatedTicket=ticketService.generate(username, customerId,applicationId);
@@ -83,49 +96,50 @@ public class SedaAuthenticationSuccessHandler implements AuthenticationSuccessHa
 				response.sendRedirect(urlBack+"?"+ID_TICKET+"="+ticket);
 			}
 			else{
-				logger.debug("User "+username+" and client "+customerId+" are not associated with application "+applicationId);
-				throw new ApplicationNotFoundException("User "+username +" and client " + customerId+"not granted for application "+applicationId);
-				//response.sendRedirect("/views/errors/error?error=true");
-				
+	    		String message=USER_NOT_GRANTED.concat(username).concat("customerId: "+customerId).concat("applicationId "+applicationId);
+	    		logger.debug(message);
+	    	    response.sendRedirect(EXCEPTIONS_CONTROLLER_URI+"/"+UserNotGrantedException.class.getName()+"/"+message);	
 			}
 		} else {
-			logger.debug("ApplicationId,customerId or application back url are null.");
-			throw new ApplicationNotFoundException("ApplicationId,customerId or application back url are null.");
-			//response.sendRedirect("/views/errors/error?error=true");
+			String message=APPLICATION_CUSTOMER_PROBLEMS.concat("customerId: "+customerId).concat("applicationId "+applicationId);
+			logger.debug(message);
+    	    response.sendRedirect(EXCEPTIONS_CONTROLLER_URI+"/"+ApplicationNotFoundException.class.getName()+"/"+message);
 		}
 		
     	}catch(Exception e){
     		logger.debug("Generic exception while sending ticker for application  "+applicationId +" and customer "+customerId);
-    		throw new GenericTicketException("Generic exception while sending ticker for application  "+applicationId +" and customer "+customerId,e);
+    		//throw new GenericTicketException("Generic exception while sending ticker for application  "+applicationId +" and customer "+customerId,e);
+    		String message=GENERIC_ERROR.concat("customerId: "+customerId).concat("applicationId "+applicationId);
+    	    response.sendRedirect(EXCEPTIONS_CONTROLLER_URI+"/"+GenericTicketException.class.getName()+"/"+message);
     	}
 	}
     
     /*Controlla se l'utente-cliente è censito controllando se è valorizzato il codiceFiscale*/
-    protected boolean checkUserApplicationId(String username){
-    	UsernameClient usernameClient = new UsernameClient(username,customerId);
-    	String  codiceFiscale="";
-    	try{
-    		codiceFiscale=securityService.getCodiceFiscaleFromUsernameClient(usernameClient);
-    	}catch(Exception e){
-    		logger.debug("Errors occurred while checking esername "+username+" and customerId "+ customerId);
-    		return false;
-    	}
-    	if(codiceFiscale!=null&&!codiceFiscale.isEmpty()){
-    		return true;
-    	}
-    	return false;
-    }
-	
-    /*Cerca la url back dell'utente-client applicazione*/
-    protected String setUrlBack(CustomerApplication customerApplication){
-        String urlBack=securityService.findURLBackByCustumerApplication(customerApplication);
-        return  urlBack;	
-		
-    }
-    
-    protected String setUrlBack(CustomerCodeApplication customerCodeApplication){
-        String urlBack=securityService.findURLBackByCustumerCodeApplication(customerCodeApplication);
-        return  urlBack;	
-    }
+//    protected boolean checkUserApplicationId(String username){
+//    	UsernameClient usernameClient = new UsernameClient(username,customerId);
+//    	String  codiceFiscale="";
+//    	try{
+//    		codiceFiscale=securityService.getCodiceFiscaleFromUsernameClient(usernameClient);
+//    	}catch(Exception e){
+//    		logger.debug("Errors occurred while checking esername "+username+" and customerId "+ customerId);
+//    		return false;
+//    	}
+//    	if(codiceFiscale!=null&&!codiceFiscale.isEmpty()){
+//    		return true;
+//    	}
+//    	return false;
+//    }
+//	
+//    /*Cerca la url back dell'utente-client applicazione*/
+//    protected String setUrlBack(CustomerApplication customerApplication){
+//        String urlBack=securityService.findURLBackByCustumerApplication(customerApplication);
+//        return  urlBack;	
+//		
+//    }
+//    
+//    protected String setUrlBack(CustomerCodeApplication customerCodeApplication){
+//        String urlBack=securityService.findURLBackByCustumerCodeApplication(customerCodeApplication);
+//        return  urlBack;	
+//    }
         
 }

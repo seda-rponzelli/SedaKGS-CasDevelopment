@@ -1,5 +1,6 @@
 package it.seda.security.sign.out;
 
+import it.seda.security.cas.CASParametersURL;
 import it.seda.security.domain.Ticket;
 import it.seda.security.persistence.ManagerMapper;
 import it.seda.security.service.ManagerService;
@@ -10,6 +11,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+
 
 
 
@@ -24,7 +26,7 @@ public class LogoutUtils {
 	
 	
 	private static  final Logger logger = LoggerFactory.getLogger(LogoutUtils.class);
-	
+	private static String ID_TICKET=CASParametersURL.ID_TICKET.getParameterName();
 	
 	@Autowired  ManagerMapper managerMapper;
 	//@Autowired  ManagerService managerService;
@@ -69,7 +71,7 @@ public class LogoutUtils {
 			con.setRequestProperty("User-Agent", "SEDA_CAS");
 			con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
 	 
-			String urlParameters = "ticket=".concat(ticketId);
+			String urlParameters = ID_TICKET.concat("=").concat(ticketId);
 	 
 			// Send post request
 			con.setDoOutput(true);

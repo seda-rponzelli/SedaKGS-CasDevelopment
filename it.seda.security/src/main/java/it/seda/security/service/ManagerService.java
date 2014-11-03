@@ -138,8 +138,13 @@ public class ManagerService {
 	 public String getCustomerIdByURI(String uri){
 		 return managerMapper.getCustomerIdByURI(uri);
 	 }
-	 
+	 @Transactional(readOnly=true)
 	 public List<Application >getAllChildApplications(String applicationId){
 		 return managerMapper.getAllChildApplications(applicationId);
+	 }
+	 
+	 @Transactional(readOnly=true)
+	 public int  hasParent(String applicationId){
+		 return managerMapper.hasParent(applicationId);
 	 }
 }

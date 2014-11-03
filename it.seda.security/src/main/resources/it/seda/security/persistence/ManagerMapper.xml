@@ -568,6 +568,14 @@ AND A2.SEAPPL_CKEYAPPL=#{applicationId}
 </select>
 
 
+<select id="hasParent" resultType="int" parameterType="string">
+SELECT count(*) FROM SEAPPLTB A1
+INNER JOIN SEAPPLTB A2
+ON A2.SEAPPL_CCODMAST=A1.SEAPPL_CCODMAST
+WHERE A1.SEAPPL_CCODAPP=#{applicationId}
+</select>
+
+
 
 	
 </mapper>

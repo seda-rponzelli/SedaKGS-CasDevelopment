@@ -1,1 +1,3 @@
-Si sono verificati dei probelmi
+Si sono verificati dei problemi : 
+
+${ex}

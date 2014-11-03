@@ -2,6 +2,7 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 <%@ taglib prefix="x" uri="http://template.seda.it/tags"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <div id="aside">
 	<c:url var="loginUrl" value="/j_signon" />
@@ -10,7 +11,11 @@
 			<h3>${x:i18n('login.form.title')}</h3>
 			<hr/>
 			<c:if test="${param.failed=='true'}">
+			   <!--  
 				<div style="color: red; font-size: 12px;">${SPRING_SECURITY_LAST_EXCEPTION.message}</div>
+			    -->
+			    <c:set var="errorMessage" value="login.exception.messages.${param.exception}"></c:set>
+				<div style="color: red; font-size: 12px;">${x:i18n(errorMessage)}</div>
 			</c:if>					
 			<div>
 				<label for="j_username">${x:i18n('login.form.username')}</label>
