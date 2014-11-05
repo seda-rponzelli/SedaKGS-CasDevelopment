@@ -4,15 +4,8 @@
 
 <mapper namespace="it.seda.security.persistence.ManagerMapper">
 
-<!--  
-	<resultMap id="customer" type="Customer">
-		<id property="id" column="id" />
-		<result property="name" column="customer_name" />
-		<result property="code" column="customer_code" />
-	</resultMap> 		
--->
 
-<!-- ORACLE DB INIZIO -->
+
 <resultMap id="customer" type="Customer">
 		<id property="chiavePrimariaCliente" column="SECUST_CKEYCUST" />
 		<result property="descrizioneCliente" column="SECUST_CDESCCUS" />
@@ -23,16 +16,7 @@
 		<result property="operatoreDiUltimaVariazione" column="SECUST_COPEUVAR" />
 		<result property="dataDiUltimaVariazione" column="SECUST_GDATUVAR" />
 </resultMap> 
-<!-- ORACLE DB FINE -->
 
-<!-- 
-	<resultMap id="customerUser" type="CustomerUser">
-		<id property="customerId" column="customer_id" />	
-		<id property="username" column="username" />
-	</resultMap>
- -->
- 
- <!-- ORACLE DB INIZIO -->
    <resultMap id="customerUser" type="CustomerUser">
         <id property="chiaveTabellaRelazioneUserCliente" column="SEUTEC_CKEYUTEC" />
 		<id property="chiavePrimariaDelCliente" column="SECUST_CKEYCUST" />	
@@ -43,17 +27,7 @@
 		<result property="operatoreUltimaVariazione" column="SEUTEC_COPEUVAR" />
 		<result property="dataUltimaVariazione" column="SEUTEC_GDATUVAR" />
 	</resultMap>
- <!-- ORACLE DB FINE -->
-
  
-  <!--  
-	<resultMap id="application" type="Application">
-		<id property="id" column="id" />
-		<result property="name" column="application_name" />
-	</resultMap>
-  -->
-  
-   <!-- ORACLE DB INIZIO -->
    <resultMap id="application" type="Application">
 		<id property="chiavePrimariaDelleApplicazioni" column="SEAPPL_CKEYAPPL"/>
 		<result property="codiceApplicazione" column="SEAPPL_CCODAPP" />
@@ -63,18 +37,7 @@
 		<result property="operatoreUltimaVariazione" column="SEAPPL_COPEUVAR" />
 		<result property="dataUltimaVariazione" column="SEAPPL_GDATUVAR" />
 	</resultMap>
-	<!-- ORACLE DB FINE -->
-	
-	
-	<!--  
-	<resultMap id="customerApplication" type="CustomerApplication">
-		<id property="customerId" column="customer_id" />
-		<id property="applicationId" column="application_id" />
-		<result property="returnURL" column="return_url" />
-	</resultMap>
-	-->
-	
-	<!-- ORACLE DB INIZIO -->
+
 	<resultMap id="customerApplication" type="CustomerApplication">
 	    <id property="chiavePrimariaDelleApplicazioniCliente" column="SEAPPC_CKEYAPPC" />
 		<id property="chiavePrimariaDelleApplicazioni" column="SEAPPL_CKEYAPPL" />
@@ -85,47 +48,17 @@
 	    <result property="operatoreUltimaVariazione" column="SEAPPC_COPEUVAR" />
 	    <result property="dataUltimaVariazione" column="SEAPPC_GDATUVAR" />
 	</resultMap>
-	<!-- ORACLE DB FINE -->
 	
-	<!-- ************************** -->
-	<!-- **** Gestione clienti **** -->
-	<!-- ************************** -->	
-	
-	<!--  
-	<insert id="insertCustomer" parameterType="Customer">
-		INSERT INTO CUSTOMERS (ID, CUSTOMER_NAME, CUSTOMER_CODE)
-		VALUES (#{id},#{name},#{code})
-	</insert>
-	-->
-	<!-- ORACLE DB INIZIO -->
 	<insert id="insertCustomer" parameterType="Customer">
 		INSERT INTO SECUSTTB (SECUST_CKEYCUST,SECUST_CCODCUS,SECUST_CDESCCUS,SECUST_CCUSCENSER,SECUST_COPERINS,SECUST_GDATAINS,SECUST_COPEUVAR,SECUST_GDATUVAR)
 		VALUES (#{chiavePrimariaCliente},#{codiceCliente},#{descrizioneCliente},#{flagClienteCentroServizio},#{operatoreDiInserimento},#{dataDiInserimento},#{operatoreDiUltimaVariazione},#{dataDiUltimaVariazione})
 	</insert>
-	<!-- ORACLE DB FINE -->
 	
-	<!--  
-	<delete id="deleteCustomer" parameterType="Customer">
-		DELETE FROM CUSTOMERS
-		WHERE ID=#{id}
-	</delete>
-	-->
-	<!-- ORACLE DB INIZIO -->
 	<delete id="deleteCustomer" parameterType="Customer">
 		DELETE FROM SECUSTTB
 		WHERE SECUST_CKEYCUST=#{chiavePrimariaCliente}
 	</delete>
-	<!-- ORACLE DB FINE -->
 	
-	<!--  
-	<update id="updateCustomer" parameterType="Customer">
-        UPDATE CUSTOMERS
-           SET customer_name=#{name}
-             , customer_code=#{code}
-         WHERE ID=#{id}
-	</update>
-	-->
-	<!-- ORACLE DB INIZIO -->
 	<update id="updateCustomer" parameterType="Customer">
         UPDATE SECUSTTB
            SET SECUST_CCODCUS=#{codiceCliente}
@@ -136,27 +69,11 @@
              , SECUST_GDATUVAR=CURRENT_TIMESTAMP
          WHERE SECUST_CKEYCUST=#{chiavePrimariaCliente}
 	</update>
-	<!-- ORACLE DB FINE -->
-	<!--  
-	<select id="existsCustomer" parameterType="string" resultType="boolean">
-	    SELECT 1 FROM CUSTOMERS WHERE CUSTOMER.ID=#{id}
-	</select>	
-	-->
-	<!-- ORACLE DB INIZIO -->
-	<select id="existsCustomer" parameterType="string" resultType="boolean">
-	    SELECT 1 FROM SECUSTTB WHERE SECUSTTB.SECUST_CKEYCUST=#{chiavePrimariaCliente}
+	
+	<select id="existsCustomer" parameterType="string" resultType="int">
+	    SELECT COUNT(*) FROM SECUSTTB WHERE SECUSTTB.SECUST_CKEYCUST=#{chiavePrimariaCliente}
 	</select>
-	<!-- ORACLE DB FINE -->
-	<!--  
-	<select id="selectCustomer" parameterType="string">
-	    SELECT CUSTOMER.ID
-	         , CUSTOMER.CUSTOMER_NAME
-	         , CUSTOMER.CUSTOMER_CODE
-	     FROM CUSTOMERS
-	     WHERE CUSTOMER.ID=#{id}
-	</select>
-	-->
-	<!-- ORACLE DB INIZIO -->
+	
 	<select id="selectCustomer" parameterType="string">
 	    SELECT SECUSTTB.SECUST_CKEYCUST
 	         , SECUSTTB.SECUST_CCODCUS
@@ -169,18 +86,7 @@
 	     FROM SECUSTTB
 	     WHERE SECUSTTB.SECUST_CKEYCUST=#{chiavePrimariaCliente}
 	</select>
-	<!-- ORACLE DB FINE -->
-	<!--  
-	<select id="listCustomer" resultMap="customer">
-	    SELECT CUSTOMER.ID
-	         , CUSTOMER.CUSTOMER_NAME
-	         , CUSTOMER.CUSTOMER_CODE
-	      FROM CUSTOMERS
-         WHERE ID &lt;&gt; 'SEDA'	      
-	     ORDER BY ID	       		
-	</select>
-	-->
-	<!-- ORACLE DB INIZIO -->
+	
 	<select id="listCustomer" resultMap="customer">
 	    SELECT SECUSTTB.SECUST_CKEYCUST
 	         , SECUSTTB.SECUST_CCODCUS
@@ -194,30 +100,13 @@
          WHERE SECUST_CKEYCUST &lt;&gt; 'SEDA'	      
 	     ORDER BY SECUST_GDATAINS DESC	       		
 	</select>
-	<!-- ORACLE DB FINE -->
 	
-	<!-- 
-	<select id="listCustomerCount" resultType="int">
-	    SELECT COUNT(*)
-	      FROM CUSTOMERS
-	    WHERE ID &lt;&gt; 'SEDA'
-	</select>
-	 -->
-    <!-- ORACLE DB INIZIO -->
     <select id="listCustomerCount" resultType="int">
 	    SELECT COUNT(*)
 	      FROM SECUSTTB
 	    WHERE ID &lt;&gt; 'SEDA'
 	</select>
-    <!-- ORACLE DB FINE -->
-	<!-- **** Gestione clienti/utenti **** -->
-	<!--  
-	<insert id="insertCustomerUser" parameterType="CustomerUser">
-	   INSERT INTO CUSTOMER_USERS (CUSTOMER_ID, USERNAME)
-	   VALUES (#{customer_id},#{username})
-	</insert>
-	-->
-	<!-- ORACLE DB INIZIO -->
+   
 	<insert id="insertCustomerUser" parameterType="CustomerUser">
 	   INSERT INTO SEUTECTB (SEUTEC_CKEYUTEC,
 	                         SEUTEC_COPERINS,
@@ -237,31 +126,14 @@
 	           #{codiceFiscale}
 	           )
 	</insert>
-	<!-- ORACLE DB FINE -->
-	<!--  
-	<delete id="deleteCustomerUser" parameterType="CustomerUser">
-		DELETE FROM CUSTOMER_USERS
-		WHERE USERNAME=#{username}
-	</delete>
-	-->
-	<!-- ORACLE DB INIZIO -->
+	
 	<delete id="deleteCustomerUser" parameterType="CustomerUser">
 		DELETE FROM SEUTECTB
 		WHERE SEUSER_CKEYUSER=#{chiavePrimariaTabellaUsers}
 	</delete>
-	<!-- ORACLE DB FINE -->
-	<!--  
-	<select id="existsCustomerUser" parameterType="CustomerUser" resultType="boolean">
-		SELECT 1
-		  FROM CUSTOMER_USERS
-		 WHERE CUSTOMER_ID=#{customer_id}
-		   AND USERNAME=#{username}  
-	</select>
 	
-	-->
-	<!-- ORACLE DB INIZIO -->
-	<select id="existsCustomerUser" parameterType="CustomerUser" resultType="boolean">
-		SELECT 1
+	<select id="existsCustomerUser" parameterType="CustomerUser" resultType="int">
+		SELECT COUNT(*)
 		  FROM SEUTECTB
 		 WHERE SECUST_CKEYCUST=#{chiavePrimariaDelCliente}
 		   AND SEUSER_CKEYUSER=#{chiavePrimariaTabellaUsers}  
@@ -295,27 +167,12 @@
 		        #{operatoreUltimaVariazione},
 		        CURRENT_TIMESTAMP)
 	</insert>
-	<!-- ORACLE DB FINE -->
-	<!--  
-	<delete id="deleteApplication" parameterType="Application">
-		DELETE FROM APPLICATIONS
-		 WHERE ID=#{id}
-	</delete>
-	-->
-	<!-- ORACLE DB INIZIO -->
+	
 	<delete id="deleteApplication" parameterType="Application">
 		DELETE FROM SEAPPLTB
 		 WHERE SEAPPL_CKEYAPPL=#{chiavePrimariaDelleApplicazioni}
 	</delete>
-	<!-- ORACLE DB FINE -->
-	<!--  
-	<update id="updateApplication" parameterType="Application">
-		UPDATE APPLICATIONS
-		   SET APPLICATION_NAME=#{application_name}
-		 WHERE ID=#{id}
-	</update>
-	-->
-	<!-- ORACLE DB INIZIO -->
+	
 	<update id="updateApplication" parameterType="Application">
 		UPDATE SEAPPLTB
 		   SET SEAPPL_CCODAPP=#{application_name},
@@ -326,36 +183,15 @@
 		       SEAPPL_GDATUVAR=#{application_name}
 		 WHERE SEAPPL_CKEYAPPL=#{chiavePrimariaDelleApplicazioni}
 	</update>
-	<!-- ORACLE DB FINE -->
-	<!--  
-	<select id="existsApplication" parameterType="string" resultType="boolean">
-	    SELECT 1 FROM APPLICATIONS WHERE ID=#{id}
+	
+	<select id="existsApplication" parameterType="string" resultType="int">
+	    SELECT COUNT(*) FROM SEAPPLTB WHERE SEAPPL_CKEYAPPL=#{chiavePrimariaDelleApplicazioni}
 	</select>	
-	-->
-	<!-- ORACLE DB INIZIO -->
-	<select id="existsApplication" parameterType="string" resultType="boolean">
-	    SELECT 1 FROM SEAPPLTB WHERE SEAPPL_CKEYAPPL=#{chiavePrimariaDelleApplicazioni}
+	
+	<select id="existsApplicationByName" parameterType="string" resultType="int">
+	    SELECT CPUNT(*) FROM SEAPPLTB WHERE SEAPPL_CCODAPP=#{codiceApplicazione}
 	</select>	
-	<!-- ORACLE DB FINE -->
-	<!--  
-	<select id="existsApplicationByName" parameterType="string" resultType="boolean">
-	    SELECT 1 FROM APPLICATIONS WHERE APPLICATION_NAME=#{application_name}
-	</select>	
-	-->
-	<!-- ORACLE DB INIZIO -->
-	<select id="existsApplicationByName" parameterType="string" resultType="boolean">
-	    SELECT 1 FROM SEAPPLTB WHERE SEAPPL_CCODAPP=#{codiceApplicazione}
-	</select>	
-	<!-- ORACLE DB FINE -->
-	<!--  
-	<select id="selectApplication" parameterType="string" resultMap="application">
-	    SELECT APPLICATIONS.ID
-	         , APPLICATIONS.APPLICATION_NAME
-	      FROM APPLICATIONS
-	     WHERE ID=#{id}
-	</select>
-	-->
-	<!-- ORACLE DB INIZIO -->
+	
 	<select id="selectApplication" parameterType="string" resultMap="application">
 	    SELECT SEAPPLTB.SEAPPL_CKEYAPPL
 	         , SEAPPLTB.SEAPPL_CCODAPP
@@ -367,16 +203,7 @@
 	      FROM SEAPPLTB
 	     WHERE SEAPPL_CKEYAPPL=#{chiavePrimariaDelleApplicazioni}
 	</select>
-	<!-- ORACLE DB FINE -->
-	<!--  
-	<select id="selectApplicationIdByName" parameterType="string" resultMap="application">
-	    SELECT APPLICATIONS.ID
-	         , APPLICATIONS.APPLICATION_NAME
-	      FROM APPLICATIONS
-	     WHERE APPLICATION_NAME=#{applicationName}
-	</select>
-	-->
-	<!-- ORACLE DB INIZIO -->
+	
 	<select id="selectApplicationIdByName" parameterType="string" resultMap="application">
 	    SELECT SEAPPLTB.SEAPPL_CKEYAPPL
 	         , SEAPPLTB.SEAPPL_CCODAPP
@@ -388,17 +215,7 @@
 	      FROM SEAPPLTB
 	     WHERE SEAPPL_CCODAPP=#{codiceApplicazione}
 	</select>
-	<!-- ORACLE DB FINE -->
-	<!-- 
-	<select id="listApplication" resultMap="application">
-		SELECT APPLICATIONS.ID
-		     , APPLICATIONS.APPLICATION_NAME
-		  FROM APPLICATIONS
-		 WHERE ID &lt;&gt; 'SCAS'
-		 ORDER BY ID
-	</select>
-	 -->
-	 <!-- ORACLE DB INIZIO -->
+	
 	 <select id="listApplication" resultMap="application">
 		SELECT SEAPPLTB.SEAPPL_CKEYAPPL
 	         , SEAPPLTB.SEAPPL_CCODAPP
@@ -411,21 +228,13 @@
 		 WHERE SEAPPL_CCODAPP &lt;&gt; 'SCAS'
 		 ORDER BY SEAPPL_CKEYAPPL
 	</select>
-	 <!-- ORACLE DB FINE -->
-	 <!--  
-	<select id="listApplicationCount" resultType="int">
-		SELECT COUNT(*)
-		  FROM APPLICATIONS
-		 WHERE ID &lt;&gt; 'SCAS'	
-	</select>
-	-->
-	<!-- ORACLE DB INIZIO -->
+	
 	<select id="listApplicationCount" resultType="int">
 		SELECT COUNT(*)
 		  FROM SEAPPLTB
 		 WHERE SEAPPL_CKEYAPPL &lt;&gt; 'SCAS'	
 	</select>
-	<!-- ORACLE DB FINE -->
+	
 	
 	<!-- **** Gestione clienti/applicazioni **** -->
 	<!--  
@@ -434,7 +243,7 @@
 		VALUES (#{customerId},#{applicationId},#{returnUrl})
 	</insert>
 	-->
-	<!-- ORACLE DB INIZIO -->
+	
 	<insert id="insertCustomerApplication" parameterType="CustomerApplication">
 		INSERT INTO SEAPPCTB (SEAPPC_CKEYAPPC, 
 		                      SEAPPC_CURLAPPLCLIENTE, 
@@ -453,16 +262,7 @@
 		        #{chiavePrimariaDelleApplicazioni},
 		        #{chiavePrimariaDelCliente})
 	</insert>
-	<!-- ORACLE DB FINE -->
-	<!--  
-	<update id="updateCustomerApplication" parameterType="CustomerApplication">
-		UPDATE CUSTOMER_APPLICATIONS
-		   SET RETURN_URL=#{returnUrl}
-		 WHERE CUSTOMER_ID=#{customerId}
-		   AND APPLICATION_ID=#{applicationId}
-	</update>
-	-->
-	<!-- ORACLE DB INIZIO -->
+	
 	<update id="updateCustomerApplication" parameterType="CustomerApplication">
 		UPDATE SEAPPCTB
 		   SET SEAPPC_CURLAPPLCLIENTE=#{urlApplicazioneDelCliente},
@@ -473,31 +273,13 @@
 		 WHERE SECUST_CKEYCUST=#{chiavePrimariaDelCliente}
 		   AND SEAPPL_CKEYAPPL=#{chiavePrimariaDelleApplicazioni}
 	</update>
-	<!-- ORACLE DB FINE -->
-	<!--  
-	<delete id="deleteCustomerApplication" parameterType="CustomerApplication">
-		DELETE FROM CUSTOMER_APPLICATIONS
-		 WHERE CUSTOMER_ID=#{customerId}
-		   AND APPLICATION_ID=#{applicationId}		
-	</delete>
-	-->
-	<!-- ORACLE DB INIZIO -->
+	
 	<delete id="deleteCustomerApplication" parameterType="CustomerApplication">
 		DELETE FROM SEAPPCTB
 		 WHERE SECUST_CKEYCUST=#{chiavePrimariaDelCliente}
 		   AND SEAPPL_CKEYAPPL=#{chiavePrimariaDelleApplicazioni}		
 	</delete>
-	<!-- ORACLE DB FINE -->
-	<!--  
-	<select id="listCustomerApplication" parameterType="string">
-		SELECT CUSTOMER_ID
-		     , APPLICATION_ID
-		     , RETURN_URL
-		 FROM CUSTOMER_APPLICATIONS
-		WHERE CUSTOMER_ID=#{customerId}
-	</select>
-	-->
-	<!-- ORACLE DB INIZIO -->
+	
 	<select id="listCustomerApplication" parameterType="string">
 		SELECT SEAPPC_CKEYAPPC
 		     , SEAPPC_CURLAPPLCLIENTE
@@ -510,15 +292,7 @@
 		 FROM SEAPPCTB
 		WHERE SECUST_CKEYCUST=#{chiavePrimariaDelCliente}
 	</select>
-	<!-- ORACLE DB FINE -->
-	<!--  
-	<select id="listCustomerApplicationCount" parameterType="string" resultType="int">
-		SELECT COUNT(*)
-		  FROM CUSTOMER_APPLICATIONS
-		 WHERE CUSTOMER_ID=#{customerId}
-	</select>		
-	-->		
-	<!-- ORACLE DB INIZIO -->
+	
 	<select id="listCustomerApplicationCount" parameterType="string" resultType="int">
 		SELECT COUNT(*)
 		  FROM SEAPPCTB

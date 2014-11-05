@@ -233,11 +233,11 @@ public class SecurityService {
 		}
 	}
 
-	public void updateSignon(Signon signon) {
+	public void updateSignon(String username,Signon signon) {
 
 		Account tempAccount = new Account();
 
-		tempAccount.setUsername(signon.getChiavePrimariaTabellaUsers());
+		tempAccount.setUsername(username);
 		Object salt = saltSource.getSalt(new UserDetailsAdapter(tempAccount));
 		signon.setPasswordValidaDellUtenza(passwordEncoder.encodePassword(
 				signon.getPasswordValidaDellUtenza(), salt));
@@ -305,7 +305,7 @@ public class SecurityService {
 
 	@Transactional(readOnly = true)
 	public Account getAccountByTicket(String idTicket) {
-		if(securityMapper.isTicketValid(idTicket)){
+		if(securityMapper.isTicketValid(idTicket)>0){
 		return securityMapper.getAccountByTicket(idTicket);
 		}
 		logger.debug("Ticket is expired");
@@ -318,5 +318,14 @@ public class SecurityService {
 	}
 	
 	
+	@Transactional(readOnly = true)
+	public Signon getSignon(UsernameClient usernameClient){
+		return securityMapper.getSignon(usernameClient);
+	}
+	
+	@Transactional(readOnly = true)
+	public List<String> listUserPassword(UsernameClient usernameClient){
+		return securityMapper.listUserPassword(usernameClient);
+	}
 
 }

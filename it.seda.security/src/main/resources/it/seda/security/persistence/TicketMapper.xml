@@ -17,13 +17,7 @@
 		<result property="chiavePrimariaDelleApplicazioni" column="SEAPPL_CKEYAPPL" />
 	</resultMap> 	
 
-<!--  
-	<insert id="insertTicket" parameterType="Ticket">
-		INSERT INTO TICKETS (ID, USERNAME, APPLICATION_ID, EXPIRATION_DATE)
-		VALUES (#{id},#{username},#{applicationId}, #{expirationDate})
-	</insert>
--->
-<!--ORACLE DB INIZIO -->
+
 <insert id="insertTicket" parameterType="Ticket">
 INSERT INTO SETICKTB (SETICK_CKEYTICK, 
                           SETICK_CUSERNAME, 
@@ -47,31 +41,12 @@ INSERT INTO SETICKTB (SETICK_CKEYTICK,
             #{chiavePrimariaDelleApplicazioni}
             )
  </insert>
-<!-- ORACLE DB FRNE -->
-<!-- 
-	<delete id="deleteTicket" parameterType="Ticket">
-		DELETE FROM TICKETS
-		WHERE ID=#{id}
-	</delete>
- -->
- <!--ORACLE DB INIZIO -->
+
  <delete id="deleteTicket" parameterType="Ticket">
 		DELETE FROM TICKETS
 		WHERE ID=#{chiavePrimariaDellaTabellaDeiTicket}
 	</delete>
- <!-- ORACLE DB FRNE -->
- <!--  
-	<select id="selectTicket" parameterType="string">
-	    SELECT TICKETS.ID
-	         , TICKETS.USERNAME
-	         , TICKETS.APPLICATION_ID
-	         , TICKETS.CREATION_DATE	         
-	         , TICKETS.EXPIRATION_DATE	         
-	     FROM TICKETS
-	    WHERE TICKETS.ID=#{id}
-	</select>
--->
-<!--ORACLE DB INIZIO -->
+ 
 <select id="selectTicket" parameterType="string">
 SELECT SETICKTB.SETICK_CKEYTICK
 	         , SETICKTB.SETICK_CUSERNAME
@@ -86,23 +61,7 @@ SELECT SETICKTB.SETICK_CKEYTICK
 	     FROM SETICKTB
 	    WHERE SETICKTB.SETICK_CKEYTICK=#{chiavePrimariaDellaTabellaDeiTicket}
 </select>
- <!-- ORACLE DB FINE -->
- <!--  
-	<select id="listTicket" resultMap="ticket" parameterType="Ticket">
-	    SELECT TICKETS.ID
-	         , TICKETS.USERNAME
-	         , TICKETS.APPLICATION_ID
-	         , TICKETS.CREATION_DATE	         
-	         , TICKETS.EXPIRATION_DATE	         
-	     FROM TICKETS
-	     <where>
-	     	<if test="username != null"> username=#{username}</if>
-	     	<if test="application_id != null"> application_id=#{application_id}</if>
-	     </where>
-	    ORDER BY TICKETS.EXPIRATION_DATE DESC	       		
-	</select>
-	-->
-<!--  ORACLE DB INIZIO -->
+ 
 <select id="listTicket" resultMap="ticket" parameterType="Ticket">
 SELECT SETICKTB.SETICK_CKEYTICK
 	         , SETICKTB.SETICK_CUSERNAME
@@ -121,17 +80,7 @@ SELECT SETICKTB.SETICK_CKEYTICK
 	     </where>
 	    ORDER BY SETICKTB.SETICK_GDATSCAD DESC	
 </select> 
-<!-- ORACLE DB FINE -->
-<!--  
-	<select id="listTicketCount" resultType="int" parameterType="Ticket">
-	    SELECT COUNT(*)
-	     FROM TICKETS
-	     <where>
-	     	<if test="username != null"> username=#{username}</if>
-	     	<if test="application_id != null"> application_id=#{application_id}</if>
-	     </where>
-	</select>
--->
+
 <select id="listTicketCount" resultType="int" parameterType="Ticket">
 SELECT COUNT(*)
 	     FROM SETICKTB
@@ -206,16 +155,17 @@ SELECT A1.SETICK_CKEYTICK
          , A1.SETICK_COPEUVAR	
          , A1.SETICK_GDATUVAR
          , A1.SEAPPL_CKEYAPPL
-FROM  SEAPPCTB
-INNER JOIN SETICKTB A1
-ON  A1.SETICK_CKEYTICK=#{ticketId}
-AND  A1.SETICK_GDATSCAD=(SELECT MAX(A2.SETICK_GDATSCAD) 
-                              FROM SETICKTB A2
-                              WHERE A2.SETICK_CKEYTICK=A1.SETICK_CKEYTICK )
-INNER JOIN SEUTECTB
-ON SEUTECTB.SEUSER_CUSERNAME=A1.SETICK_CUSERNAME
-AND SEUTECTB.SEUSER_CCODFISC=A1.SETICK_CCODFISC
-
+FROM SETICKTB A1
+INNER JOIN SETICKTB A2
+ON  A2.SETICK_CKEYTICK=#{ticketId}
+AND A1.SETICK_CCODFISC=A2.SETICK_CCODFISC
+AND A1.SETICK_CUSERNAME=A2.SETICK_CUSERNAME
+AND A1.SETICK_GDATSCAD=(SELECT MAX(A3.SETICK_GDATSCAD) 
+                              FROM SETICKTB A3
+                              WHERE A3.SEAPPL_CKEYAPPL=A1.SEAPPL_CKEYAPPL
+                              AND A1.SETICK_CCODFISC=A3.SETICK_CCODFISC
+                              AND A1.SETICK_CUSERNAME=A3.SETICK_CUSERNAME
+                              )
 </select>
 
 

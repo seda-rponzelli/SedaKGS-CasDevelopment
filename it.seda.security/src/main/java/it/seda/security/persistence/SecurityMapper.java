@@ -75,7 +75,11 @@ public interface SecurityMapper {
 	
 	String getCodiceFiscaleFromUserApplication(UserApplication userApplication);
 	
-	boolean isTicketValid(String idTicket);
+	int isTicketValid(String idTicket);
 	
 	String getCodiceFiscaleFromUsernameClient(UsernameClient usernameClient);
+	
+	Signon getSignon(UsernameClient usernameClient);
+	
+	List<String> listUserPassword(UsernameClient usernameClient);
 }

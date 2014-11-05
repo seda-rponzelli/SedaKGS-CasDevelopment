@@ -75,6 +75,9 @@ public class SedaSingleSignOutHandler {
             return;
         }
         String ticket=(String) session.getAttribute(ID_TICKET);
+        StringBuffer sb=new StringBuffer("");
+        sb.append(ticket);
+       
         if(ticket==null){
         	 logger.debug("No customer ticket available.");
              return;
@@ -82,7 +85,7 @@ public class SedaSingleSignOutHandler {
         logger.debug("Recording session for ticket {} " , ticket);
 
         try {
-        	HttpSession oldSession = (HttpSession) sessionMappingStorage.removeSessionByMappingId(ticket);
+        	HttpSession oldSession = (HttpSession) sessionMappingStorage.removeSessionByMappingId(sb.toString());
         	if(oldSession.getId()!=session.getId()){
         	oldSession.invalidate();
         	}
@@ -91,7 +94,7 @@ public class SedaSingleSignOutHandler {
             // ignore if the session is already marked as invalid.  Nothing we can do!
         }
        
-        sessionMappingStorage.addSessionById(ticket, session);
+        sessionMappingStorage.addSessionById(sb.toString(), session);
     }
 	
 	

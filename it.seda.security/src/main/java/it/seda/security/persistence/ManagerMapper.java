@@ -22,7 +22,7 @@ public interface ManagerMapper {
 	void insertCustomer(Customer customer);
 	void deleteCustomer(Customer customer);
 	void updateCustomer(Customer customer);
-	boolean existsCustomer(String customerId);
+	int existsCustomer(String customerId);
 	Customer selectCustomer(String customerId);
 	List<Customer> listCustomer(RowBounds rowBounds);
 	List<Customer> listCustomer();
@@ -41,8 +41,8 @@ public interface ManagerMapper {
 	void updateApplication(Application application);
 	Application selectApplication(String applicationId);
 	Application selectApplicationIdByName(String applicationName);
-	boolean existsApplication(String applicationId);
-	boolean existsApplicationByName(String applicationName);
+	int existsApplication(String applicationId);
+	int existsApplicationByName(String applicationName);
 	List<Application> listApplication(RowBounds rowBounds);
 	int listApplicationCount();
 	

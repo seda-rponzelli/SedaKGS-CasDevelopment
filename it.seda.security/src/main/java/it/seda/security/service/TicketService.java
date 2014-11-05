@@ -49,7 +49,7 @@ public class TicketService {
 	 */
 	public Ticket generate(String username, String customerId, String applicationId) {
 		UserApplication userApplication=new UserApplication(username,customerId,applicationId);
-		if (!managerMapper.existsApplication(applicationId)) {
+		if (managerMapper.existsApplication(applicationId)==0) {
 			throw ApplicationNotFoundException.idNotFound(applicationId); 
 		}
 		

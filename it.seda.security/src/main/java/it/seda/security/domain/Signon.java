@@ -11,8 +11,7 @@ import java.util.Date;
  */
 public class Signon {
 
-	// private String username;
-	// private String password;
+	
 	private String chiaveTabellaDellePasswordDellUtenza;// SEPWRD_CKEYPWRD
 	private String passwordValidaDellUtenza;// SEPWRD_CPASSWORD
 	private String ultimaPasswordValidaDellUtenza;// SEPWRD_CPASSWOLD

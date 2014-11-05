@@ -5,6 +5,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <div id="aside">
+  <div id="customerUnidentified" style="color:red">
+    <c:if test="${param.j_seda_cas_customer=='null'}">
+     ${x:i18n('login.form.customerId.undefined')} 
+    </c:if>
+  </div>
 	<c:url var="loginUrl" value="/j_signon" />
 	<form action="${loginUrl}" method="post">
 		<div style="padding: 10px; background-color: #CCCCCC;">
@@ -49,3 +54,10 @@
 	</div>
 </div>
 <div style="clear:both;"></div>
+<c:if test="${param.exception=='CredentialsExpiredException'}">
+<h1>
+  <a href="<c:url value="login/changePassword" />">${x:i18n('login.form.change.password')}</a>	
+  ${SPRING_SECURITY_LAST_USERNAME}
+  ${SPRING_SECURITY_LAST_USERNAME.message}
+</h1>
+</c:if>

@@ -22,8 +22,6 @@
 
 
 	<resultMap id="mutableAccount" type="MutableAccount" extends="abstractAccount">
-	<!--  	<result property="customerId" column="SECUST_CKEYCUST" />	
-		<result property="groupName" column="SEGRUP_CKEYGRUP" />-->
 	<id property="chiaveTabellaRelazioneUserCliente" column="SEUTEC_CKEYUTEC"></id>	
 	<id property="chiavePrimariaDellaTabellaUtentiClienti" column="SEUTEC_CKEYUTEC"></id>
     <result property="operatoreInserimento"  column="SEUTEC_COPERINS"/> 
@@ -154,27 +152,18 @@
 	</resultMap>
 
 
-<!--  
-	<select id="getAccountByUsername" parameterType="string" resultMap="accountComplete">
-		SELECT
-		USERS.username,
-		USERS.firstName,
-		USERS.lastName,
-		USERS.email,
-		USERS.enabled,
-		USERS.registration,
-		USERS.expiration,
-		USERS.credentialsExpiration,
-		USERS.attempts,
-		USERS.lastAttempt,
-		GROUP_AUTHORITIES.authority as "authority"
-		FROM USERS, GROUP_MEMBERS, GROUP_AUTHORITIES
-		WHERE USERS.USERNAME = #{username}
-		AND GROUP_MEMBERS.USERNAME = USERS.USERNAME
-		AND GROUP_AUTHORITIES.GROUP_ID = GROUP_MEMBERS.GROUP_ID
-	</select>
--->
-<!--  ORACLE DB INIZIO -->
+     <resultMap id="signon" type="Signon"> 
+		<id property="chiaveTabellaDellePasswordDellUtenza" column="SEPWRD_CKEYPWRD" />
+		<id property="passwordValidaDellUtenza" column="SEPWRD_CPASSWORD" />
+		<result property="ultimaPasswordValidaDellUtenza" column="SEPWRD_CPASSWOLD" />
+		<result property="penultimaPasswordValidaDellUtenza" column="SEPWRD_CPASSOLDO" />
+		<result property="operatoreInserimento" column="SEPWRD_COPERINS" />
+		<result property="dataInserimento" column="SEPWRD_GDATAINS" />
+		<result property="operatoreUltimaVariazione" column="SEPWRD_COPEUVAR" />
+		<result property="dataUltimaVariazione" column="SEPWRD_GDATUVAR" />
+		<result property="chiavePrimariaTabellaUsers" column="SEUSER_CKEYUSER" />
+	</resultMap> 
+
 <select id="getAccountByUsername" parameterType="string" resultMap="accountComplete">
 SELECT  SEUSERTB.SEUSER_CKEYUSER,
         SEUSERTB.SEUSER_CNOMEUSER,
@@ -212,33 +201,7 @@ ON SEFUNZTB.SEFUNZ_CKEYFUNZ=SELFNSTB.SEFUNZ_CKEYFUNZ
 INNER JOIN SESFUNTB
 ON SESFUNTB.SESFUN_CKEYSFUN=SELFNSTB.SESFUN_CKEYSFUN
 </select>
-<!--  ORACLE DB FINE -->
 
-
-<!--  
-<select id="getMutableAccountByUsername" parameterType="string" resultMap="mutableAccount">
-		SELECT
-		USERS.username,
-		USERS.firstName,
-		USERS.lastName,
-		USERS.email,
-		USERS.enabled,
-		USERS.attempts,
-		USERS.lastAttempt,		
-		CUSTOMER_USERS.ID as "customerId"
-		GROUPS.GROUP_NAME as "groupName"
-		FROM USERS 
-		INNER JOIN GROUP_MEMBERS
-		ON GROUP_MEMBERS.USERNAME = USERS.USERNAME
-		INNER JOIN GROUPS
-		ON GROUP_MEMBERS.GROUP_ID = GROUPS.ID
-		INNER JOIN CUSTOMER_USERS
-		ON CUSTOMER_USERS.username=USERS.username	
-		WHERE USERS.USERNAME=#{username}
-	</select>
--->
-
-<!--  ORACLE DB INIZIO -->
 <select id="getMutableAccountByUsername" parameterType="string" resultMap="mutableAccount">
      SELECT  SEUSERTB.SEUSER_CKEYUSER,
         SEUSERTB.SEUSER_CNOMEUSER,
@@ -295,18 +258,7 @@ INNER JOIN SECUSTTB
 ON SECUSTTB.SECUST_CCODCUS=#{customerId}
 WHERE SEUSERTB.SEUSER_CUSERNAME =  #{username}	
 </select>
-<!-- ORACLE DB FINE -->
 
-<!-- 
-<select id="groupsList"  resultMap="group">
-		SELECT GROUPS.GROUP_DESCRIPTION,
-		       GROUPS.GROUP_NAME,
-		       GROUPS.ID 
-		  FROM GROUPS
-		ORDER BY GROUP_NAME 
-	</select>
-	 -->
-<!-- ORACLE DB INIZIO -->
 <select id="groupsList"  resultMap="group">
 		SELECT SEGRUPTB.SEGRUP_CKEYGRUP,
          SEGRUPTB.SEGRUP_CCODGRUPPO,
@@ -319,34 +271,7 @@ WHERE SEUSERTB.SEUSER_CUSERNAME =  #{username}
   FROM   SEGRUPTB 
   ORDER BY SEGRUP_CCODGRUPPO 
 </select>
-<!-- ORACLE DB FINE -->
-<!--  
-	<select id="listAccount"  parameterType="string" resultMap="mutableAccount">
-	  SELECT
-		USERS.username,
-		USERS.firstName,
-		USERS.lastName,
-		USERS.email,
-		USERS.enabled,
-		USERS.attempts,
-		USERS.lastAttempt,
-		USERS.lastAttempt,
-        CUSTOMER_USERS.ID as "customerId"		
-		GROUPS.GROUP_NAME as "groupName"
-		FROM USERS 
-		INNER JOIN GROUP_MEMBERS
-		ON GROUP_MEMBERS.USERNAME = USERS.USERNAME
-		INNER JOIN GROUPS
-		ON GROUP_MEMBERS.GROUP_ID = GROUPS.ID
-		INNER JOIN CUSTOMER_USERS
-		ON CUSTOMER_USERS.username=USERS.username		
-		WHERE USERS.USERNAME!='admin'
-		AND CUSTOMER_USERS.customer_id=#{customerId}		
-		ORDER BY USERS.username
-	</select>
-	
-	-->
-	<!-- ORACLE DB INIZIO -->
+
 	<select id="listAccount"  parameterType="string" resultMap="mutableAccount">
 	SELECT  SEUSERTB.SEUSER_CKEYUSER,
           SEUSERTB.SEUSER_CNOMEUSER,
@@ -381,19 +306,7 @@ WHERE SEUSERTB.SEUSER_CUSERNAME =  #{username}
 	  AND SECUSTTB.SECUST_CKEYCUST=#{customerId}		
       ORDER BY SEUSERTB.SEUSER_CKEYUSER
 	</select>
-	<!-- ORACLE DB FINE -->
 	
-	
-	<!-- 
-	<select id="listAccountCount"  parameterType="string" resultType="int">
-	   SELECT COUNT(USERS.USERNAME)
-       FROM USERS
-       INNER JOIN CUSTOMER_USERS
-		ON CUSTOMER_USERS.username=USERS.username
-       WHERE USERS.USERNAME &lt;&gt; 'admin'
-       AND CUSTOMER_USERS.customer_id=#{customerId}
-	</select>
-	 -->
 	 <select id="listAccountCount"  parameterType="string" resultType="int">
 	 SELECT COUNT(SEUSERTB.SEUSER_CKEYUSER)
        FROM SEUSERTB
@@ -404,40 +317,7 @@ WHERE SEUSERTB.SEUSER_CUSERNAME =  #{username}
       </select> 
        
        
-    <!-- 
-	<insert id="insertAccount" parameterType="MutableAccount">
-		INSERT INTO USERS
-		(username,firstName,lastName,email,expiration,enabled)
-		VALUES
-		(#{username}, #{firstName}, #{lastName}, #{email}, '2099-12-31', #{enabled})
-	</insert>
-	-->
-	<!-- ORACLE DB INIZIO -->
-	<!--  
-	<insert id="insertAccount" parameterType="MutableAccount">
-	 INSERT INTO SEUSERTB
-		   (SEUSERTB.SEUSER_CKEYUSER,
-		    SEUSERTB.SEUSER_CUSERNAME,
-		    SEUSERTB.SEUSER_CCODFISC,
-		    SEUSERTB.SEUSER_CNOMEUSER,
-		    SEUSERTB.SEUSER_CCOGNUSER,
-		    
-		    
-		    
-		    
-		    SEUSERTB.SEUSER_CINDEMAIL,
-		    SEUSERTB.SEUSER_GDATASCAD,
-		    SEUSERTB.SEUSER_CUSRABIL)
-		   VALUES
-		   (#{usernameKey},#{username},#{codiceFiscale},#{firstName}, #{lastName},
-		    
-		   
-		   
-		    #{email}, '2099-12-31', #{enabled})
-    </insert>
-    -->
-	<!-- ORACLE DB FINE -->
-	<!-- ORACLE DB INIZIO -->
+   
 	<insert id="insertAccount" parameterType="MutableAccount">
 	 INSERT INTO SEUSERTB
 		   (SEUSERTB.SEUSER_CKEYUSER,
@@ -536,19 +416,7 @@ WHERE SEUSERTB.SEUSER_CUSERNAME =  #{username}
 		   #{dataUltimaVariazione}
 		   )
     </insert>
-	<!-- ORACLE DB FINE -->
 	
-	<!-- 
-	<update id="updateAccount" parameterType="MutableAccount">
-	   UPDATE USERS
-       SET firstName=#{firstName}
-         , lastName=#{lastName}
-         , email=#{email}
-         , enabled=#{enabled}
-       WHERE username=#{username}
-	</update>
-    -->
-    <!-- ORACLE DB INIZIO -->
  <update id="updateAccount" parameterType="MutableAccount">
   UPDATE SEUSERTB
        SET SEUSERTB.SEUSER_CNOMEUSER=#{firstName}
@@ -558,61 +426,28 @@ WHERE SEUSERTB.SEUSER_CUSERNAME =  #{username}
          , SEUSERTB.SEUSER_CUSRABIL=#{enabled}
        WHERE SEUSERTB.SEUSER_CKEYUSER=#{chiavePrimariaTabellaUsers}
  </update>
-<!-- ORACLE DB FINE -->
-<!--  
-	<update id="loginFailure" parameterType="string">
-	   UPDATE USERS
-	      SET attempts=attempts+1
-	        , lastAttempt=CURRENT TIMESTAMP
-       WHERE username=#{username}
-	</update>
--->
-<!-- ORACLE DB INIZIO -->
+
 <update id="loginFailure" parameterType="string">
 	   UPDATE SEUSERTB
 	      SET SEUSER_NNUMTENTIVI=SEUSER_NNUMTENTIVI+1
 	        , SEUSER_GULTIMOTENT=CURRENT_TIMESTAMP
        WHERE SEUSER_CUSERNAME=#{username}
 	</update>
-<!-- ORACLE DB FINE -->
 
 <!--  
-	<insert id="insertDefaultGroupMember" parameterType="string">
-		INSERT INTO GROUP_MEMBERS (group_id, username)
-		SELECT id,#{username} FROM GROUPS 
-		 WHERE group_name='users'
-	</insert>
--->	
-<!-- ORACLE DB INIZIO -->
 <insert id="insertDefaultGroupMember" parameterType="string">
 		INSERT INTO SEGRUUTB(SEGRUU_CKEYGRUU,SEGRUU_COPERINS,SEGRUU_GDATAINS,SEGRUU_COPEUVAR,SEGRUU_GDATUVAR,SEGRUP_CKEYGRUP,SEUTEC_CKEYUTEC)
 		   SELECT ?????????,'CAS',CURRENT_TIMESTAMP,#{chiavePrimariaTabellaUsers},SEUTEC_CKEYUTEC FROM SEGRUPTB 
 		   WHERE SEGRUPTB.SEGRUPTB='users'
 	</insert>
-<!-- ORACLE DB FINE -->
+-->
 
-<!-- 
-	<delete id="deleteGroupMember" parameterType="GroupMember">
-	    DELETE FROM GROUP_MEMBERS
-	     WHERE group_id = #{groupId}
-	       AND username = #{username}
-	</delete>
- -->
- <!-- ORACLE DB INIZIO -->
  <delete id="deleteGroupMember" parameterType="GroupMember">
 	    DELETE FROM SEGRUUTB
 	     WHERE SEGRUP_CKEYGRUP = #{chiavePrimariaDellaTabellaGruppi}
 	       AND SEUTEC_CKEYUTEC = #{chiavePrimariaDellaTabellaUtentiClienti}
 	</delete>
- <!-- ORACLE DB FINE -->
- <!--  
-	<delete id="insertGroupMember" parameterType="GroupMember">
-	    INSERT INTO GROUP_MEMBERS (group_id, username)
-		SELECT id,#{username} FROM GROUPS 
-		 WHERE group_name=#{groupName}
-	</delete> 
--->
- <!-- ORACLE DB INIZIO -->
+ 
  <insert id="insertGroupMember" parameterType="GroupMember">
 	    INSERT INTO SEGRUUTB (SEGRUU_CKEYGRUU, SEGRUU_COPERINS,SEGRUU_GDATAINS,SEGRUU_COPEUVAR,SEGRUU_GDATUVAR,SEGRUP_CKEYGRUP,SEUTEC_CKEYUTEC)
 		VALUES(#{chiavePrimariaTabellaGruppiUtenti},#{operatoreInserimento},CURRENT_TIMESTAMP,#{operatoreUltimaVariazione},CURRENT_TIMESTAMP,(SELECT SEGRUPTB.SEGRUP_CKEYGRUP FROM SEGRUPTB WHERE SEGRUP_CKEYGRUP=#{chiavePrimariaDellaTabellaGruppi}),#{chiavePrimariaDellaTabellaUtentiClienti}) 
@@ -632,54 +467,27 @@ WHERE SEUSERTB.SEUSER_CUSERNAME =  #{username}
 	   SEGRUU_GDATUVAR=CURRENT_TIMESTAMP
 	   WHERE SEGRUUTB.SEUTEC_CKEYUTEC=#{chiavePrimariaDellaTabellaUtentiClienti}
 	</update>
-  <!-- ORACLE DB FINE -->
-  <!--  
-	<delete id="deleteAccount" parameterType="string">
-	   DELETE FROM USERS
-       WHERE USERS.USERNAME=#{username}
-	</delete>
--->
-
-<!-- ORACLE DB INIZIO -->
+  
 <delete id="deleteAccount" parameterType="string">
   DELETE FROM SEUSERTB
        WHERE SEUSERTB.SEUSER_CKEYUSER=#{SEUSER_CKEYUSER}
 </delete>
-<!-- ORACLE DB FINE -->
 
-<!--  
-	<update id="updateSignon" parameterType="Signon">
-		UPDATE SIGNON SET PASSWORD = #{password}
-		WHERE USERNAME = #{username}
-	</update>
--->
-<!-- ORACLE DB INIZIO -->
     <update id="updateSignon" parameterType="Signon">
 	    UPDATE SEPWRDTB 
 	    SET SEPWRDTB.SEPWRD_CPASSWORD = #{passwordValidaDellUtenza},
-	    SEPWRD_GDATUVAR=CURRENT_TIMESTMP
+	    SEPWRD_CPASSWOLD=#{ultimaPasswordValidaDellUtenza},
+	    SEPWRD_CPASSOLDO=#{penultimaPasswordValidaDellUtenza},
+	    SEPWRD_COPEUVAR=#{operatoreUltimaVariazione},
+	    SEPWRD_GDATUVAR=CURRENT_TIMESTAMP
 		WHERE SEUSER_CKEYUSER = #{chiavePrimariaTabellaUsers}
 	</update>
-<!-- ORACLE DB FINE -->
-<!-- 
-	<update id="updateCredentialsExpiration" parameterType="string">
-		UPDATE USERS SET CREDENTIALSEXPIRATION = CURRENT DATE+30 DAY
-		WHERE USERNAME = #{username}
-	</update>
- -->
-<!-- ORACLE DB INIZIO -->
+
     <update id="updateCredentialsExpiration" parameterType="string">
 		 UPDATE SEUSERTB SET SEUSERTB.SEUSER_GSCADCREDEN = SYSDATE +30
 		  WHERE SEUSERTB.SEUSER_CKEYUSER = #{username}
 	</update>
-<!-- ORACLE DB FINE -->
-<!--  
-	<insert id="insertSignon" parameterType="Signon">
-		INSERT INTO SIGNON (PASSWORD,USERNAME)
-		VALUES (#{password}, #{username})
-	</insert>
--->
-<!-- ORACLE DB INIZIO -->
+
 <insert id="insertSignon" parameterType="Signon">
 		INSERT INTO SEPWRDTB (SEPWRD_CKEYPWRD,
 		                    SEPWRD_CPASSWORD,
@@ -700,7 +508,7 @@ WHERE SEUSERTB.SEUSER_CUSERNAME =  #{username}
 		        CURRENT_TIMESTAMP,
 		        #{chiavePrimariaTabellaUsers})
 </insert>
-<!-- ORACLE DB FINE -->
+<!-- GESTIONE TABELLA GRUPPI-->
 
 
 <insert id="insertGroup" parameterType="Group">
@@ -875,8 +683,8 @@ AND SEAPPLTB.SEAPPL_CKEYAPPL=#{applicationId}
 
 
 
-<select id="isTicketValid" parameterType="string" resultType="boolean">
-SELECT 1 FROM SETICKTB
+<select id="isTicketValid" parameterType="string" resultType="int">
+SELECT COUNT(*) FROM SETICKTB
 WHERE SETICKTB.SETICK_CKEYTICK=#{idTicket}
 AND SETICKTB.SETICK_GDATAINS &lt; CURRENT_TIMESTAMP
 </select>
@@ -901,5 +709,60 @@ ON SECUSTTB.SECUST_CCODCUS=#{customerId}
 WHERE SEUSERTB.SEUSER_CUSERNAME=#{username}
 </select>
 
+
+<select id="getSignon" parameterType="UsernameClient" resultMap="signon">
+SELECT SEPWRDTB.SEPWRD_CKEYPWRD,
+       SEPWRDTB.SEPWRD_CPASSWORD,
+       SEPWRDTB.SEPWRD_CPASSWOLD,
+       SEPWRDTB.SEPWRD_CPASSOLDO,
+       SEPWRDTB.SEPWRD_COPERINS,
+       SEPWRDTB.SEPWRD_GDATAINS,
+       SEPWRDTB.SEPWRD_COPEUVAR,
+       SEPWRDTB.SEPWRD_GDATUVAR,
+       SEPWRDTB.SEUSER_CKEYUSER
+FROM SEUSERTB
+INNER JOIN SEUTECTB
+ON SEUSERTB.SEUSER_CUSERNAME=SEUTECTB.SEUSER_CUSERNAME
+AND SEUSERTB.SEUSER_CCODFISC=SEUTECTB.SEUSER_CCODFISC
+INNER JOIN SEPWRDTB
+ON SEPWRDTB.SEUSER_CKEYUSER=SEUSERTB.SEUSER_CKEYUSER
+INNER JOIN SECUSTTB
+ON SECUSTTB.SECUST_CKEYCUST=SEUTECTB.SECUST_CKEYCUST
+WHERE SEUSERTB.SEUSER_CUSERNAME=#{username}
+AND SECUSTTB.SECUST_CCODCUS=#{customerId}
+</select>
+
+
+<select id="listUserPassword" parameterType="UsernameClient" resultType="string">
+SELECT SEPWRD_CPASSWORD FROM SEPWRDTB 
+INNER JOIN SEUSERTB
+ON SEPWRDTB.SEUSER_CKEYUSER=SEUSERTB.SEUSER_CKEYUSER
+AND SEUSERTB.SEUSER_CUSERNAME=#{username}
+INNER JOIN SEUTECTB
+ON SEUTECTB.SEUSER_CUSERNAME=SEUSERTB.SEUSER_CUSERNAME
+AND SEUTECTB.SEUSER_CCODFISC=SEUSERTB.SEUSER_CCODFISC
+INNER JOIN SECUSTTB 
+ON SECUSTTB.SECUST_CCODCUS=#{customerId}
+UNION
+SELECT SEPWRD_CPASSWOLD FROM SEPWRDTB
+INNER JOIN SEUSERTB
+ON SEPWRDTB.SEUSER_CKEYUSER=SEUSERTB.SEUSER_CKEYUSER
+AND SEUSERTB.SEUSER_CUSERNAME=#{username}
+INNER JOIN SEUTECTB
+ON SEUTECTB.SEUSER_CUSERNAME=SEUSERTB.SEUSER_CUSERNAME
+AND SEUTECTB.SEUSER_CCODFISC=SEUSERTB.SEUSER_CCODFISC
+INNER JOIN SECUSTTB 
+ON SECUSTTB.SECUST_CCODCUS=#{customerId}
+UNION
+SELECT SEPWRD_CPASSOLDO FROM SEPWRDTB
+INNER JOIN SEUSERTB
+ON SEPWRDTB.SEUSER_CKEYUSER=SEUSERTB.SEUSER_CKEYUSER
+AND SEUSERTB.SEUSER_CUSERNAME=#{username}
+INNER JOIN SEUTECTB
+ON SEUTECTB.SEUSER_CUSERNAME=SEUSERTB.SEUSER_CUSERNAME
+AND SEUTECTB.SEUSER_CCODFISC=SEUSERTB.SEUSER_CCODFISC
+INNER JOIN SECUSTTB 
+ON SECUSTTB.SECUST_CCODCUS=#{customerId}
+</select>
 
 </mapper>

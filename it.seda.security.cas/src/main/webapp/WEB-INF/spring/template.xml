@@ -15,6 +15,11 @@
 		 <parameter key="content" value="/views/auth/logout.jsp"/>
 	</screen>
 	
+	
+	<screen name="changePassword">
+		 <parameter key="content" value="/views/auth/changePassword.jsp"/>
+	</screen>
+	
 	<screen name="home" extends="base">
 		 <parameter key="content" value="/views/home.jsp"/>
 	</screen>	

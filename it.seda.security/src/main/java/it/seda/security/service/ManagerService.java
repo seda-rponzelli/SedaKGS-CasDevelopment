@@ -31,7 +31,7 @@ public class ManagerService {
 	@Autowired private ManagerMapper managerMapper;
 
 	public void insertCustomer(Customer customer) {
-		if (managerMapper.existsCustomer(customer.getChiavePrimariaCliente())) {
+		if (managerMapper.existsCustomer(customer.getChiavePrimariaCliente())>0) {
 			throw new DuplicateCustomerException(customer.getChiavePrimariaCliente());
 		}
 		managerMapper.insertCustomer(customer);
@@ -74,14 +74,14 @@ public class ManagerService {
 	 
 	 public void insertApplication(Application application) {
 		
-		 if (managerMapper.existsApplicationByName(application.getCodiceApplicazione())) {
+		 if (managerMapper.existsApplicationByName(application.getCodiceApplicazione())>0) {
 			throw new DuplicateApplicationException(application.getCodiceApplicazione());
 		}
 		 managerMapper.insertApplication(application);
 	 }
 	 
 	 public void updateApplication(Application application) {
-		 if (managerMapper.existsApplicationByName(application.getCodiceApplicazione())) {
+		 if (managerMapper.existsApplicationByName(application.getCodiceApplicazione())>0) {
 			 throw new DuplicateApplicationException(application.getCodiceApplicazione());
 		 }
 		 managerMapper.updateApplication(application);
