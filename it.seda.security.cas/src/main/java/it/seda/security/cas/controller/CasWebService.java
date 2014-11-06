@@ -80,14 +80,16 @@ public class CasWebService {
 	
 	@RequestMapping(value="/login/casws/logout/{ticketId}", method = RequestMethod.GET)
 	public String performSingleSignOut(@PathVariable String ticketId,ModelMap model,HttpServletRequest request) {
+	//Log out applications	
 	List<Ticket> ticketList= ticketService.getAllUserApplicationTickets(ticketId);
 	logoutUtils.performCASLogout(ticketList);	
 	
+	//Log out cas
 	HttpSession session=request.getSession();
 	session.invalidate();
-//	SecurityContext context = SecurityContextHolder.getContext();
-//    context.setAuthentication(null);
-//    SecurityContextHolder.clearContext();
+	//SecurityContext context = SecurityContextHolder.getContext();
+    //context.setAuthentication(null);
+    //SecurityContextHolder.clearContext();
     
     
 	return "logout";

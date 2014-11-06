@@ -95,7 +95,7 @@ public class LoginController {
 		if (!isAccessible(request, applicationId, customerId)) {
 			String message = APPLICATION_NOT_ACCESSIBLE.concat("ApplicationId  " + applicationId).concat("  CustomerId " + customerId);
 			logger.debug(message);
-			throw new ApplicationNotAccessibleException(message);
+			return "login";
 		}
 		CustomerCodeApplication customerCodeApplication = new CustomerCodeApplication(customerId, applicationId);
 		urlBack = tokenUtils.setUrlBack(customerCodeApplication);

@@ -15,7 +15,8 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
  
 	<!-- **************************************************************************** -->
-	<context:component-scan base-package="it.seda.security" />
+	<context:component-scan base-package="it.seda.security.cas.authentication" />
+	<context:component-scan base-package="it.seda.security" resource-pattern="ApplicationContextProvider.class" />
 
 	<!-- enable autowire/inject -->
 	<context:annotation-config />
@@ -63,8 +64,10 @@
     
 	
     
-	 <custom-filter ref="singleLogoutFilter" before="LOGOUT_FILTER"/>
+   <custom-filter ref="singleLogoutFilter" before="LOGOUT_FILTER"/>
+   <!-- 
      <custom-filter position="CAS_FILTER" ref="casAuthenticationFilter" />
+    -->
   </http>
   
    <!-- This filter handles a Single Logout Request from the CAS Server -->
@@ -72,10 +75,7 @@
      <beans:constructor-arg value="http://localhost:8080/it.seda.security.cas/login/casws/logout"></beans:constructor-arg>
    </beans:bean>
 
-  <beans:bean id="casAuthenticationFilter"
-        class="it.seda.security.cas.authentication.CasAuthenticationFilter">
-        <beans:property name="authenticationManager" ref="authenticationManager"/>
-  </beans:bean>
+ 
   
   
 
@@ -84,13 +84,24 @@
     <beans:property name="loginUrl" value="http://localhost:8080/it.seda.security.cas/login"/>
     <beans:property name="serviceProperties" ref="serviceProperties"/>
   </beans:bean>
+  
+   
+  <!-- 
+   <beans:bean id="casAuthenticationFilter"
+        class="it.seda.security.cas.authentication.CasAuthenticationFilter">
+        <beans:property name="authenticationManager" ref="authenticationManager"/>
+  </beans:bean>
 
+-->
 	<authentication-manager id="authenticationManager">
+	<!--  
 		<authentication-provider user-service-ref="userDetailsService">
 			<password-encoder ref="passwordEncoder">
 				<salt-source ref="saltSource" />
 			</password-encoder>
 		</authentication-provider>
+		-->
 	</authentication-manager>
+
 
 </beans:beans>
