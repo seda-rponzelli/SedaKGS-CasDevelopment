@@ -215,7 +215,13 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
 
 	private UserDetailsAdapter getUserBean(String ticket) {	
 		RestTemplate restTemplate = new RestTemplate();
-		String webServiceURL=urlEncodedService+"/casws/"+ticket+".json";
+		String webServiceURL=null;
+		if(redirectUrl.lastIndexOf("?")==1){
+		webServiceURL=redirectUrl+"/casws/"+ticket+".json";
+		}else{
+		String [] splitURL=	redirectUrl.split("\\?");
+		webServiceURL=splitURL[0]+"/casws/"+ticket+".json"+"?"+splitURL[1];
+		}
     	com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
 		objectMapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
 		objectMapper.configure(MapperFeature.USE_ANNOTATIONS, true);

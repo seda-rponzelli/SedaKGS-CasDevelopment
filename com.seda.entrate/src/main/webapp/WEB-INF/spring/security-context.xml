@@ -14,94 +14,45 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
  
-	<!-- **************************************************************************** -->
+	<!-- Classi del security per autenticazioni tramite CAS -->
 	<context:component-scan base-package="it.seda.security.cas.authentication" />
 	<context:component-scan base-package="it.seda.security" resource-pattern="ApplicationContextProvider.class" />
-
 	<!-- enable autowire/inject -->
 	<context:annotation-config />
-	
-<!-- enable transaction with annotations -->
+    <!-- enable transaction with annotations -->
 	<tx:annotation-driven />
-
-	<!-- **************************************************************************** -->
+	<!--risoerse statiche della web app* -->
 	<http pattern="/resources/**" security="none"/>
 	<http pattern="/errors/**" security="none"/>
 	<http pattern="/entrypoint.jsp" security="none"/>
-
-	
-	<!-- **************************************************************************** -->
-	
-	<beans:bean id="webexpressionHandler" class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler" />
-	
-	<beans:bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
-		<beans:constructor-arg value="256" />
-	</beans:bean>
-
-	<beans:bean id="saltSource" class="org.springframework.security.authentication.dao.ReflectionSaltSource" p:userPropertyToUse="username" />
-
+	<!-- *************************************************************************** -->
+	<!-- ************************** CAS CONFIGURATION INIZIO************************ -->
+	<!-- *************************************************************************** -->
+    <!-- This filter contains login url, codice applicazione -->
+    <!-- La url del servizio name="service" value="url" à la url back dal cas  -->
+    <!-- se configurata con value="DATABASE" la url back viene presa dalla tabella SEAPPCTB -->
+    <!-- altrimenti viene presa quella inserita -->
 	<beans:bean id="serviceProperties" class="it.seda.security.cas.ServiceProperties">
-		<beans:property name="service"   value="http://localhost:8080/it.seda.security.cas/login"/>
+		<beans:property name="service"   value="http://localhost:8080/entrate"/>
 	    <beans:property name="sendRenew" value="false"/>
 	    <beans:property name="applicationName" value="entrate"/>
 	</beans:bean> 
-	  
-	
-	  
-  <http entry-point-ref="casEntryPoint" authentication-manager-ref="authenticationManager" auto-config="true" use-expressions="true">
-	 <intercept-url pattern="/manager/**" access="isAuthenticated()"/>
-	 
-	 
-	 <!--   
-	 <logout logout-success-url="http://localhost:8080/it.seda.security.cas/logout"/>
-	 casLogOutFilter dovrebbe inviare una richiesta di log out al cas che
-	 dovrebbe cercare tutte le applicazioni dell'utente cliente connesso
-	 ed inviare una request di invalidare le session, occorre un filtro che è in ascolto delle request di invalidamento del cas
-	 e che invalidi la sessione
-	 <custom-filter before="LOGOUT_FILTER"	ref="casLogOutFilter"></custom-filter>
-	-->
-	
-    
-	
-    
-   <custom-filter ref="singleLogoutFilter" before="LOGOUT_FILTER"/>
-   <!-- 
-     <custom-filter position="CAS_FILTER" ref="casAuthenticationFilter" />
-    -->
-  </http>
-  
-   <!-- This filter handles a Single Logout Request from the CAS Server -->
-   <beans:bean id="singleLogoutFilter" class="it.seda.security.filter.SedaSingleSignOutFilter">
+	<http entry-point-ref="casEntryPoint" authentication-manager-ref="authenticationManager" auto-config="true" use-expressions="true">
+		<intercept-url pattern="/manager/**" access="isAuthenticated()"/>
+	    <custom-filter ref="singleLogoutFilter" before="LOGOUT_FILTER"/>
+	</http>
+    <!-- This filter handles a Single Logout Request from the CAS Server -->
+    <beans:bean id="singleLogoutFilter" class="it.seda.security.filter.SedaSingleSignOutFilter">
      <beans:constructor-arg value="http://localhost:8080/it.seda.security.cas/login/casws/logout"></beans:constructor-arg>
-   </beans:bean>
-
- 
-  
-  
-
-  <beans:bean id="casEntryPoint"
-      class="it.seda.security.cas.authentication.CasAuthenticationEntryPoint">
-    <beans:property name="loginUrl" value="http://localhost:8080/it.seda.security.cas/login"/>
-    <beans:property name="serviceProperties" ref="serviceProperties"/>
-  </beans:bean>
-  
-   
-  <!-- 
-   <beans:bean id="casAuthenticationFilter"
-        class="it.seda.security.cas.authentication.CasAuthenticationFilter">
-        <beans:property name="authenticationManager" ref="authenticationManager"/>
-  </beans:bean>
-
--->
-	<authentication-manager id="authenticationManager">
-	<!--  
-		<authentication-provider user-service-ref="userDetailsService">
-			<password-encoder ref="passwordEncoder">
-				<salt-source ref="saltSource" />
-			</password-encoder>
-		</authentication-provider>
-		-->
-	</authentication-manager>
-
+    </beans:bean>
+    <!-- This filter handles a Single login Request from the CAS Server -->
+    <beans:bean id="casEntryPoint" class="it.seda.security.cas.authentication.CasAuthenticationEntryPoint">
+     <beans:property name="loginUrl" value="http://localhost:8080/it.seda.security.cas/login"/>
+     <beans:property name="serviceProperties" ref="serviceProperties"/>
+    </beans:bean>
+    <authentication-manager id="authenticationManager"> </authentication-manager>
+    <!-- ************************************************************************** -->
+	<!-- ************************** CAS CONFIGURATION FINE************************-->
+	<!-- ************************************************************************** -->
 
 </beans:beans>

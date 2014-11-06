@@ -27,7 +27,7 @@ public class ApplicationCustomerIdFilter implements Filter{
 	
 	private String ID_CLIENTE=CASParametersURL.ID_CLIENTE.getParameterName();
 	private String ID_APPLICAZIONE=CASParametersURL.ID_APPLICAZIONE.getParameterName();
-
+	private String SERVICE="service";
     @Override
     public void destroy() {
         // Do nothing
@@ -47,6 +47,11 @@ public class ApplicationCustomerIdFilter implements Filter{
             String customerId = request.getParameter(ID_CLIENTE);
             if (customerId != null) {
             	session.setAttribute(ID_CLIENTE, customerId);
+            }
+            
+            String service = request.getParameter(SERVICE);
+            if (service != null) {
+            	session.setAttribute(SERVICE, service);
             }
             chain.doFilter(req, res);
 

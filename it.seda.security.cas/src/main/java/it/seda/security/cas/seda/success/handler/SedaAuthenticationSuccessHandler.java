@@ -46,6 +46,8 @@ public class SedaAuthenticationSuccessHandler implements AuthenticationSuccessHa
 	private String GENERIC_ERROR="Errore generico durante la generazione del ticket. ";
 	private String APPLICATION_LIST="j_seda_cas_application_list";
 	private String PARENT_CUSTOMER="j_seda_cas_parent_customer";
+	private String DATABASE="DATABASE";
+	private String SERVICE="service";
 	
 	private static final Logger logger = LoggerFactory.getLogger(SedaAuthenticationSuccessHandler.class);
     protected String applicationId;
@@ -78,6 +80,12 @@ public class SedaAuthenticationSuccessHandler implements AuthenticationSuccessHa
 		customerId=(String) request.getSession(false).getAttribute(ID_CLIENTE);
 		CustomerCodeApplication customerCodeApplication = new CustomerCodeApplication(customerId,applicationId);
 		urlBack = tokenUtils.setUrlBack(customerCodeApplication);
+		//Se abbiamo definito una url back nel file di config. della web app lo usiamo per la redirect
+		String service=(String) request.getSession(false).getAttribute(SERVICE);
+		if(service!=null&&!service.equals(DATABASE)){
+			urlBack=service;
+		}
+		
 		logger.debug("Login completed. ApplicationId= "+applicationId+" .CustomerId= "+customerId+" .UrlBack"+urlBack+"...");
 		String username=((UserDetailsAdapter) auth.getPrincipal()).getUsername();
 		if (applicationId != null&& customerId!=null&&urlBack!=null) {
