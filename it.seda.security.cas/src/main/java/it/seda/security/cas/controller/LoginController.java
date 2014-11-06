@@ -83,7 +83,7 @@ public class LoginController {
 		 * Se lapplicazione di cui chiediamo accesso non ha parent si deve fare
 		 * la login
 		 */
-		if (managerService.hasParent(applicationId) == 0) {
+		if (managerService.hasParent(applicationCode) == 0) {
 			return "login";
 		}
 
@@ -135,7 +135,7 @@ public class LoginController {
 		boolean found = false;
 		if (customerId.equals(parentCustomer) && applicationList != null) {
 			for (Application application : applicationList) {
-				if (application.getCodiceApplicazione().equals(applicationId)) {
+				if (application.getChiavePrimariaDelleApplicazioni().equals(applicationId)) {
 					found = true;
 				}
 			}

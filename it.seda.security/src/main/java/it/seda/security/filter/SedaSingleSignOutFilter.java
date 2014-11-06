@@ -1,10 +1,7 @@
 package it.seda.security.filter;
 
 import it.seda.security.sign.out.SedaSingleSignOutHandler;
-
 import java.io.IOException;
-import java.util.HashMap;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -13,7 +10,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -55,9 +55,8 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
 	
 	
 	
-	//@Autowired protected ManagerService managerService;
-	//@Autowired protected UserDetailsService userDetailsService;
-
+	
+	private String CAS_SESSION=CASParametersURL.CAS_SESSION.getParameterName();
 	private String ID_CLIENTE=CASParametersURL.ID_CLIENTE.getParameterName();
 	private String ID_APPLICAZIONE=CASParametersURL.ID_APPLICAZIONE.getParameterName();
 	private String ID_TICKET=CASParametersURL.ID_TICKET.getParameterName();
@@ -185,6 +184,15 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
     		String applicationCustomerURl=servletRequest.getRequestURL().toString();
     		customerId=getCustomerIdFromRequest(servletRequest);
     	    logger.debug(ID_APPLICAZIONE +"="+applicationId + ID_CLIENTE+"="+customerId +". Unknown login request.");
+    	    String casSessionId=(String) session.getAttribute(CAS_SESSION);
+    	    //Se dispongo di una sessione di autenticazione del cas la imposto
+    	    if(casSessionId!=null){
+    	    	/*Se il cas ha fornito una sessione di autenticazione la utilizziamo la redirect
+    	    	 * Questa funzionalita per il momento non serve, era prevista per il recuper di informazioni
+    	    	 * di sessone con una connessione in GET. La sendredirect preserva di suo la sessione
+    	    	 * che a questo punto dovrebbe già essere salvata nel browser richiedente.*/
+    	    response.setHeader("SET-COOKIE", "JSESSIONID=" + casSessionId + "; HttpOnly");
+    	    }
     		response.sendRedirect(concatApplicationIdToUrl(applicationId,customerId));
     		return;
     	}

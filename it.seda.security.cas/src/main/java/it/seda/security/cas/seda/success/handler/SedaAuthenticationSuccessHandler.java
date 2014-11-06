@@ -38,6 +38,7 @@ public class SedaAuthenticationSuccessHandler implements AuthenticationSuccessHa
 	private String ID_CLIENTE=CASParametersURL.ID_CLIENTE.getParameterName();
 	private String ID_APPLICAZIONE=CASParametersURL.ID_APPLICAZIONE.getParameterName();
 	private String ID_TICKET=CASParametersURL.ID_TICKET.getParameterName();
+	private String CAS_SESSION=CASParametersURL.CAS_SESSION.getParameterName();
 	private String EXCEPTIONS_CONTROLLER_URI="login/exceptions";
 	private String APPLICATION_NOT_FOUND="Applicazione non censita : ";
 	private String APPLICATION_CUSTOMER_PROBLEMS="Si sono verificati problemi nel recupero delle informazioni legate all'applicazione.";
@@ -64,7 +65,7 @@ public class SedaAuthenticationSuccessHandler implements AuthenticationSuccessHa
     	
     	
     	
-    	String applicationCode=(String) request.getSession().getAttribute(ID_APPLICAZIONE);
+    	String applicationCode=(String) request.getSession(false).getAttribute(ID_APPLICAZIONE);
     	try{
     	applicationId = (managerService.selectApplicationIdByName(applicationCode)).getChiavePrimariaDelleApplicazioni();
     	}catch(Exception e){
@@ -74,7 +75,7 @@ public class SedaAuthenticationSuccessHandler implements AuthenticationSuccessHa
     	    return;
     	}
     	try{
-		customerId=(String) request.getSession().getAttribute(ID_CLIENTE);
+		customerId=(String) request.getSession(false).getAttribute(ID_CLIENTE);
 		CustomerCodeApplication customerCodeApplication = new CustomerCodeApplication(customerId,applicationId);
 		urlBack = tokenUtils.setUrlBack(customerCodeApplication);
 		logger.debug("Login completed. ApplicationId= "+applicationId+" .CustomerId= "+customerId+" .UrlBack"+urlBack+"...");
@@ -83,8 +84,8 @@ public class SedaAuthenticationSuccessHandler implements AuthenticationSuccessHa
 			boolean userGranted = tokenUtils.checkUserApplicationId(username,customerId);
 			
 			List<Application> applicationList=managerService.getAllChildApplications(applicationId);
+			HttpSession session=request.getSession(false);
 			if(applicationList!=null&&applicationList.size()>0){
-				HttpSession session=request.getSession();
 				List<Application> oldApplicationList=(List<Application>) session.getAttribute("ApplicationsList");
 				session.setAttribute(APPLICATION_LIST,applicationList);
 				session.setAttribute(PARENT_CUSTOMER,customerId);
@@ -92,8 +93,9 @@ public class SedaAuthenticationSuccessHandler implements AuthenticationSuccessHa
 			
 			Ticket generatedTicket=ticketService.generate(username, customerId,applicationId);
 			if(userGranted&&generatedTicket!=null){
+				/*il cas comunica la session con il quale valida utente applicazione*/
 				String ticket = generatedTicket.getChiavePrimariaDellaTabellaDeiTicket();
-				response.sendRedirect(urlBack+"?"+ID_TICKET+"="+ticket);
+				response.sendRedirect(urlBack+"?"+ID_TICKET+"="+ticket+"&"+CAS_SESSION+"="+session.getId());
 			}
 			else{
 	    		String message=USER_NOT_GRANTED.concat(username).concat("customerId: "+customerId).concat("applicationId "+applicationId);
@@ -108,38 +110,11 @@ public class SedaAuthenticationSuccessHandler implements AuthenticationSuccessHa
 		
     	}catch(Exception e){
     		logger.debug("Generic exception while sending ticker for application  "+applicationId +" and customer "+customerId);
-    		//throw new GenericTicketException("Generic exception while sending ticker for application  "+applicationId +" and customer "+customerId,e);
     		String message=GENERIC_ERROR.concat("customerId: "+customerId).concat("applicationId "+applicationId);
     	    response.sendRedirect(EXCEPTIONS_CONTROLLER_URI+"/"+GenericTicketException.class.getName()+"/"+message);
     	}
 	}
     
-    /*Controlla se l'utente-cliente è censito controllando se è valorizzato il codiceFiscale*/
-//    protected boolean checkUserApplicationId(String username){
-//    	UsernameClient usernameClient = new UsernameClient(username,customerId);
-//    	String  codiceFiscale="";
-//    	try{
-//    		codiceFiscale=securityService.getCodiceFiscaleFromUsernameClient(usernameClient);
-//    	}catch(Exception e){
-//    		logger.debug("Errors occurred while checking esername "+username+" and customerId "+ customerId);
-//    		return false;
-//    	}
-//    	if(codiceFiscale!=null&&!codiceFiscale.isEmpty()){
-//    		return true;
-//    	}
-//    	return false;
-//    }
-//	
-//    /*Cerca la url back dell'utente-client applicazione*/
-//    protected String setUrlBack(CustomerApplication customerApplication){
-//        String urlBack=securityService.findURLBackByCustumerApplication(customerApplication);
-//        return  urlBack;	
-//		
-//    }
-//    
-//    protected String setUrlBack(CustomerCodeApplication customerCodeApplication){
-//        String urlBack=securityService.findURLBackByCustumerCodeApplication(customerCodeApplication);
-//        return  urlBack;	
-//    }
+  
         
 }

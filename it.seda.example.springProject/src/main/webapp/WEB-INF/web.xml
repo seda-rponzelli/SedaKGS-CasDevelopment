@@ -26,6 +26,19 @@
  	<listener>
   		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
 	</listener>
+	<!-- CAS sesssion ID Filter -->
+    
+    <filter>
+		<filter-name>CasSessionFilter</filter-name>
+		<filter-class>it.seda.security.filter.CasSessionFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>CasSessionFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>		
+		<dispatcher>ERROR</dispatcher>		
+	</filter-mapping>
 	<!-- Ticket filter -->
 	<filter>
 		<filter-name>ticketRequestFilter</filter-name>
