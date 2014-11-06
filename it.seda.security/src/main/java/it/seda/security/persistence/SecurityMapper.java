@@ -82,4 +82,6 @@ public interface SecurityMapper {
 	Signon getSignon(UsernameClient usernameClient);
 	
 	List<String> listUserPassword(UsernameClient usernameClient);
+	
+	int isUserApplicationAuthorized(UserApplication userApplication);
 }

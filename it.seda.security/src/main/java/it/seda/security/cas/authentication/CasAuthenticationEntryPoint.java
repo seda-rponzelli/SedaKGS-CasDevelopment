@@ -79,13 +79,16 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
     }
 
     public final void commence(final HttpServletRequest servletRequest, final HttpServletResponse response,
-            final AuthenticationException authenticationException) throws IOException, ServletException {
+        final AuthenticationException authenticationException) throws IOException, ServletException {
+    	logger.debug("Access denied, entering in CAS authentication entry point...");
     	urlEncodedService = createServiceUrl(servletRequest, response);
         redirectUrl = createRedirectUrl(urlEncodedService);
+        logger.debug("Redirect URL: "+redirectUrl);
         if(redirectUrl==null){
         	logger.debug("Cas url is null!. Check if you have defined it in serviceProperties.");
         }
         applicationId = getApplicationId(serviceProperties);
+        logger.debug("Application id: "+applicationId);
         preCommence(servletRequest, response);
         submitTicket(servletRequest,response);
     }
@@ -179,11 +182,13 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
     
     protected void submitTicket(HttpServletRequest servletRequest,HttpServletResponse response) throws IOException {
 		HttpSession session=servletRequest.getSession();
+		logger.debug("Looking for Ticket parameter in request");
     	String ticket = (String) session.getAttribute(ID_TICKET);	
     	if (ticket== null)  {
     		String applicationCustomerURl=servletRequest.getRequestURL().toString();
     		customerId=getCustomerIdFromRequest(servletRequest);
-    	    logger.debug(ID_APPLICAZIONE +"="+applicationId + ID_CLIENTE+"="+customerId +". Unknown login request.");
+    	    logger.debug(ID_APPLICAZIONE +"="+applicationId + ID_CLIENTE+"="+customerId +".");
+    	    logger.debug("Ticket not found....preform CAS redirect at URL "+concatApplicationIdToUrl(applicationId,customerId));
     	    String casSessionId=(String) session.getAttribute(CAS_SESSION);
     	    //Se dispongo di una sessione di autenticazione del cas la imposto
     	    if(casSessionId!=null){
@@ -197,9 +202,10 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
     		return;
     	}
     	
-    	
-    	logger.debug("Calling cas web service usind ticket: "+ticket);
-    	UserDetailsAdapter userDetailsAdapter = getUserBean(ticket); 
+    	logger.debug("Ticket found. Ticket= "+ticket);
+    	logger.debug("Calling CAS cas web service...." );
+    	UserDetailsAdapter userDetailsAdapter = getUserBean(ticket);
+    	logger.debug("Account user found for username " +userDetailsAdapter.getUsername());
     	session.removeAttribute(ID_TICKET);
         if (SecurityContextHolder.getContext().getAuthentication() == null) {
             // in here, get your principal, and populate the auth object with 
@@ -208,7 +214,7 @@ public class CasAuthenticationEntryPoint implements AuthenticationEntryPoint, In
         	UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken=new UsernamePasswordAuthenticationToken(userDetailsAdapter, userDetailsAdapter.getPassword(),userDetailsAdapter.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
        }
-        
+       logger.debug("Authentication builded, redirecting to  "+servletRequest.getRequestURL().toString());
        response.sendRedirect(servletRequest.getRequestURL().toString());
      
 	}

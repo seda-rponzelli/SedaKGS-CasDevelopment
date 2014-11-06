@@ -102,7 +102,7 @@ public class LoginController {
 		logger.debug("Login completed. ApplicationId= " + applicationId+ " .CustomerId= " + customerId + " .UrlBack" + urlBack + "...");
 		String username = ((UserDetailsAdapter) auth.getPrincipal()).getUsername();
 		if (applicationId != null && customerId != null && urlBack != null) {
-			boolean userGranted = tokenUtils.checkUserApplicationId(username,customerId);
+			boolean userGranted = tokenUtils.checkUserApplicationId(username,customerId,applicationCode);
 			Ticket generatedTicket = ticketService.generate(username,
 					customerId, applicationId);
 			if (userGranted && generatedTicket != null) {

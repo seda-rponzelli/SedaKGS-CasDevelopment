@@ -62,4 +62,6 @@ public interface ManagerMapper {
 	List<Application> getAllChildApplications(String applicationId);
 	
 	int hasParent(String applicationId);
+	
+	
 }

@@ -23,6 +23,7 @@ import it.seda.security.domain.Group;
 import it.seda.security.domain.GroupMember;
 import it.seda.security.domain.Signon;
 import it.seda.security.domain.SottoFunzione;
+import it.seda.security.domain.UserApplication;
 import it.seda.security.domain.UsernameClient;
 import it.seda.security.service.exceptions.DuplicateAccountException;
 import it.seda.security.service.exceptions.ExperedTicketException;
@@ -326,6 +327,11 @@ public class SecurityService {
 	@Transactional(readOnly = true)
 	public List<String> listUserPassword(UsernameClient usernameClient){
 		return securityMapper.listUserPassword(usernameClient);
+	}
+	
+	@Transactional(readOnly = true)
+	public int isUserApplicationAuthorized(UserApplication userApplication){
+		return securityMapper.isUserApplicationAuthorized(userApplication);
 	}
 
 }
