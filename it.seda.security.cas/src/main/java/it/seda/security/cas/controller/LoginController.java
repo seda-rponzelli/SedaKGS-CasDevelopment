@@ -72,7 +72,7 @@ public class LoginController {
 		} else {
 			return new ModelAndView("login");
 		}
-
+	
 	}
 
 	private String tokenAuthentication(HttpServletRequest request,

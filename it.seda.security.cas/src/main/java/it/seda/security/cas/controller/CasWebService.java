@@ -33,6 +33,9 @@ import javax.servlet.http.HttpSession;
 
 
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,13 +52,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
  *
  */
 @Controller
-//@RequestMapping("/login/casws")
 public class CasWebService {
+	private Logger logger = LoggerFactory.getLogger(CasWebService.class);
 	
 	@Autowired TicketService ticketService;
 	@Autowired SecurityService securityService;
 	@Autowired private LogoutUtils logoutUtils;
-	
 	@RequestMapping(value="/login/casws/{ticket}", method = RequestMethod.GET)
 	public String getUserDetailsAdapter(@PathVariable String ticket, ModelMap model) {
 	
@@ -65,33 +67,20 @@ public class CasWebService {
 		}catch(Exception e){
 			account=null;
 		}
-		//model.addAttribute("accountJson", account);
 		model.addAttribute("Account", account);
 		return null;
 	}
 
-//	@RequestMapping(value="{applicationId}", method = RequestMethod.PUT)
-//	public @ResponseBody String saveApplicationId(@PathVariable String applicationId, HttpServletRequest servletRequest) {
-//		HttpSession session = servletRequest.getSession();
-//		session.setAttribute("applicationId", applicationId);
-//		return "";
-//	}
-//	
 	
 	@RequestMapping(value="/login/casws/logout/{ticketId}", method = RequestMethod.GET)
 	public String performSingleSignOut(@PathVariable String ticketId,ModelMap model,HttpServletRequest request) {
+	logger.debug("Performing log out from all applications...");
 	//Log out applications	
 	List<Ticket> ticketList= ticketService.getAllUserApplicationTickets(ticketId);
 	logoutUtils.performCASLogout(ticketList);	
-	
-	//Log out cas
+	//Logout CAS
 	HttpSession session=request.getSession();
 	session.invalidate();
-	//SecurityContext context = SecurityContextHolder.getContext();
-    //context.setAuthentication(null);
-    //SecurityContextHolder.clearContext();
-    
-    
 	return "logout";
 	}
 	
